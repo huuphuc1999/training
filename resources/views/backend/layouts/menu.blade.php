@@ -33,9 +33,9 @@
 
             <li><a><i class="fa fa-edit"></i> User <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
-                  <li><a href="{{route('users.index')}}">Show users</a></li>
+                  {{-- <li><a href="{{route('users.index')}}">Show users</a></li>
                   <li><a href="{{route('roles.index')}}">Role</a></li>
-                  <li><a href="{{route('permissions.index')}}">Permission</a></li>
+                  <li><a href="{{route('permissions.index')}}">Permission</a></li> --}}
                 </ul>
               </li>
           </ul>

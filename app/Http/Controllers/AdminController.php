@@ -1,6 +1,6 @@
 <?php
 /**
- * Home controller
+ * Admin controller
  * 
  * PHP version 7
  *
@@ -12,7 +12,6 @@
  * @link      http://localhost/
  */
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 /**
  * Handle backend requests
@@ -24,18 +23,15 @@ use Illuminate\Http\Request;
  * @license   https://opensource.org/licenses/MIT MIT License
  * @link      http://localhost/
  */
-class HomeController extends Controller
+class AdminController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * Check user if logged in is allowed access.
      */
     public function __construct()
     {
         $this->middleware('auth');
     }
-
     /**
      * Show the application dashboard.
      *
@@ -44,5 +40,6 @@ class HomeController extends Controller
     public function index()
     {
         return view('backend.dashboard');
+        // return \Session::get('inforUser');
     }
 }

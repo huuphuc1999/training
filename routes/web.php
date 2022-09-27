@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,9 +12,34 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get(
+    '/', function () { 
+        return view('welcome');
+    }
+);
+
+Route::get(
+    'logout', 
+    '\App\Http\Controllers\Auth\LoginController@logout', function () {
+        session()->forget();
+    }
+)->name('logout');
+// Backend section start
+
+Route::group(
+    ['prefix'=>'/admin','middleware'=>['auth']], function () {
+
+            Route::get(
+                '/',
+                'AdminController@index'
+            )->name('admin');
+            // User route
+            Route::resource(
+                'users',
+                'UserController'
+            );
+    }
+);
 
 Auth::routes();
 

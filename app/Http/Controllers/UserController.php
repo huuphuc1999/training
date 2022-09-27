@@ -1,9 +1,29 @@
 <?php
-
+/**
+ * User controller
+ * 
+ * PHP version 7
+ *
+ * @category  Controllers
+ * @package   App
+ * @author    Phuc <phan.phuc.rcvn2012@gmail.com>
+ * @copyright 2016 CriverCrane! Corporation. All Rights Reserved.
+ * @license   https://opensource.org/licenses/MIT MIT License
+ * @link      http://localhost/
+ */
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+/**
+ * Handle CRUD User
+ * 
+ * @category  Controllers
+ * @package   App
+ * @author    Phuc <phan.phuc.rcvn2012@gmail.com>
+ * @copyright 2016 CriverCrane! Corporation. All Rights Reserved.
+ * @license   https://opensource.org/licenses/MIT MIT License
+ * @link      http://localhost/
+ */
 class UserController extends Controller
 {
     /**
@@ -28,8 +48,9 @@ class UserController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @param \Illuminate\Http\Request $request submitted by users
+     * 
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -40,7 +61,8 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id used to display the user
+     * 
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -51,7 +73,8 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id used to edit the user
+     * 
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -62,8 +85,9 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request submitted by admin
+     * @param int                      $id      used to update the user
+     *  
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -74,7 +98,8 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id used to delete the user
+     * 
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
