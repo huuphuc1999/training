@@ -14,6 +14,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\User;
 /**
  * Handle CRUD User
  * 
@@ -27,13 +28,29 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     /**
+     * Create a new controller instance.
+     * 
+     * @param App\User $user submitted by users
+     * 
+     * @return void
+     */
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+        $this->middleware('auth');
+    }
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        $users     = $this->user->getAllUserNotDeleted();
+        $groupRole = $this->user->getGroupRole();
+        $status = $this->user->getStatusUser();
+        return $status;
+        // return view('backend.user.index', compact('users', 'groupRole'));
     }
 
     /**
