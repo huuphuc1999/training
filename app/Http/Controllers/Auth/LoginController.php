@@ -65,7 +65,7 @@ class LoginController extends Controller
     {
         $this->user = $user;
         $this->middleware('guest')->except('logout');
-        $this->now = date_format(Carbon::now('Asia/Ho_Chi_Minh'), 'Y/m/d: H-i-s');
+        $this->now = date_format(Carbon::now('Asia/Ho_Chi_Minh'), 'Y/m/d:H-i-s');
     }
     /**
      * Handle user login.

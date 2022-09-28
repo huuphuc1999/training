@@ -1,7 +1,7 @@
 <?php
 /**
  * User controller
- * 
+ *
  * PHP version 7
  *
  * @category  Controllers
@@ -13,11 +13,12 @@
  */
 namespace App\Http\Controllers;
 
+use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
-use App\User;
+
 /**
  * Handle CRUD User
- * 
+ *
  * @category  Controllers
  * @package   App
  * @author    Phuc <phan.phuc.rcvn2012@gmail.com>
@@ -28,29 +29,50 @@ use App\User;
 class UserController extends Controller
 {
     /**
+     * Inject user Repository to construct
+     */
+    protected $userRepository;
+    /**
      * Create a new controller instance.
-     * 
-     * @param App\User $user submitted by users
-     * 
+     *
+     * @param $userRepository use for query
+     *
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->user = $user;
-        $this->middleware('auth');
+        $this->userRepository = $userRepository;
     }
     /**
-     * Display a listing of the resource.
+     * Show all users that are not deleted .
+     *
+     * @param \Illuminate\Http\Request $request submitted by users
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users     = $this->user->getAllUserNotDeleted();
-        $groupRole = $this->user->getGroupRole();
-        $status = $this->user->getStatusUser();
-        return $status;
-        // return view('backend.user.index', compact('users', 'groupRole'));
+        if (request()->ajax()) {
+            $querySearch = \App\Models\User::query();
+
+            if ($request->status) {
+                $querySearch->where('is_active', $request->status);
+            }
+            if ($request->role) {
+                $querySearch->where('group_role', $request->role);
+            }
+            if ($request->email) {
+                $querySearch->where('email', 'like', '%' . $request->email . '%');
+            }
+            if ($request->name) {
+                $querySearch->where('name', 'like', '%' . $request->name . '%');
+            }
+            $results = $querySearch->paginate(10);
+            return $results;
+        }
+        $users = $this->userRepository->getAllUserNotDeleted();
+        $groupRole = $this->userRepository->getGroupRole();
+        return view('backend.user.index', compact('users', 'groupRole'));
     }
 
     /**
@@ -65,21 +87,23 @@ class UserController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param \Illuminate\Http\Request $request submitted by users
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         //
+        // $dataUser = $userRepo->getUser($request);
+        // return $dataUser;
     }
 
     /**
      * Display the specified resource.
      *
      * @param int $id used to display the user
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -91,7 +115,7 @@ class UserController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param int $id used to edit the user
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -104,7 +128,7 @@ class UserController extends Controller
      *
      * @param \Illuminate\Http\Request $request submitted by admin
      * @param int                      $id      used to update the user
-     *  
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -116,7 +140,7 @@ class UserController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id used to delete the user
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
