@@ -52,27 +52,11 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        if (request()->ajax()) {
-            $querySearch = \App\Models\User::query();
-
-            if ($request->status) {
-                $querySearch->where('is_active', $request->status);
-            }
-            if ($request->role) {
-                $querySearch->where('group_role', $request->role);
-            }
-            if ($request->email) {
-                $querySearch->where('email', 'like', '%' . $request->email . '%');
-            }
-            if ($request->name) {
-                $querySearch->where('name', 'like', '%' . $request->name . '%');
-            }
-            $results = $querySearch->paginate(10);
-            return $results;
+        if ($request->ajax()) {
+            return $this->userRepository->userSearching($request);
         }
-        $users = $this->userRepository->getAllUserNotDeleted();
         $groupRole = $this->userRepository->getGroupRole();
-        return view('backend.user.index', compact('users', 'groupRole'));
+        return view('backend.user.index', compact('groupRole'));
     }
 
     /**

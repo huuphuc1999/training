@@ -14,6 +14,7 @@
 namespace App\Repositories;
 
 use App\Repositories\EloquentRepository;
+use Yajra\Datatables\Datatables;
 
 /**
  * A template for common problems
@@ -58,6 +59,69 @@ class UserRepository extends EloquentRepository
         return $role
             ->unique('group_role')
             ->pluck('group_role');
+    }
+    /**
+     * Handle user searching data.
+     *
+     * @param \Illuminate\Http\Request $request submitted by users
+
+     * @return mixed
+     */
+    public function userSearching($request)
+    {
+        if (request()->ajax()) {
+            $querySearch = \App\Models\User::query();
+            if ($request->load == 'index') {
+                $results = $querySearch
+                    ->where('is_delete', '===', 0)
+                    ->latest()
+                    ->get();
+            }
+            if ($request->load == 'search') {
+                if ($request->filled('status')) {
+                    $querySearch
+                        ->where('is_active', $request->status)
+                        ->where('is_delete', '===', 0);
+                }
+                if ($request->role) {
+                    $querySearch
+                        ->where('group_role', $request->role)
+                        ->where('is_delete', '===', 0);
+                }
+                if ($request->email) {
+                    $querySearch
+                        ->where('email', 'like', '%' . $request->email . '%')
+                        ->where('is_delete', '===', 0);
+                }
+                if ($request->name) {
+                    $querySearch
+                        ->where('name', 'like', '%' . $request->name . '%')
+                        ->where('is_delete', '===', 0);
+                }
+                $results = $querySearch;
+            }
+
+            return Datatables::of($results)
+                ->addIndexColumn()
+                ->addColumn(
+                    'action',
+                    function ($results) {
+                        $btn = '<button type="button" id="' . 'editUserID-' . $results->id . '"><i class="fa fa-edit"></i></button>';
+                        $btn = $btn . ' <button type="button" id="' . 'removeUserID-' . $results->id . '"><i class="fa fa-remove"></i></button>';
+                        $btn = $btn . '<button type="button" id="' . 'lockUserID-' . $results->id . '" ><i class="fa fa-lock"></i></button>';
+                        return $btn;
+                    }
+                )
+                ->editColumn(
+                    'is_active',
+                    function ($results) {
+                        $results->is_active === 1 ? $status = 'Đang hoạt động' : $status = 'Tạm khóa';
+                        return $status;
+                    }
+                )
+                ->rawColumns(['action'])
+                ->make(true);
+        }
     }
 
 }
