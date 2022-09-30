@@ -13,8 +13,12 @@
  */
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Handle CRUD User
@@ -76,11 +80,17 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(AddUserRequest $request)
     {
-        //
-        // $dataUser = $userRepo->getUser($request);
-        // return $dataUser;
+        $this->userRepository->create($request->all());
+        return response()->json(
+            [
+                'code' => 200,
+                "name" => "New user added",
+                "type" => "RESPONSE_OK",
+                "message" => "success",
+            ], Response::HTTP_OK
+        );
     }
 
     /**
@@ -92,7 +102,15 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        $user = $this->userRepository->find($id);
+        return response()->json(
+            [
+                'user' => $user,
+                'message' => 'success',
+                "name" => "Get user successfully",
+                "type" => "RESPONSE_OK",
+            ], Response::HTTP_OK
+        );
     }
 
     /**
@@ -115,9 +133,19 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
-        //
+        $data = $request->all();
+        $id = $request->id;
+        !empty($data['password']) ? $data['password'] = Hash::make($data['password']) : Arr::except($data, array('password'));
+        $this->userRepository->update($id, $data);
+        return response()->json(
+            [
+                'message' => 'success',
+                "name" => "Update user successfully",
+                "type" => "RESPONSE_OK",
+            ], Response::HTTP_OK
+        );
     }
 
     /**

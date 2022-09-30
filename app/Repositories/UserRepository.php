@@ -106,9 +106,9 @@ class UserRepository extends EloquentRepository
                 ->addColumn(
                     'action',
                     function ($results) {
-                        $btn = '<button type="button" id="' . 'editUserID-' . $results->id . '"><i class="fa fa-edit"></i></button>';
-                        $btn = $btn . ' <button type="button" id="' . 'removeUserID-' . $results->id . '"><i class="fa fa-remove"></i></button>';
-                        $btn = $btn . '<button type="button" id="' . 'lockUserID-' . $results->id . '" ><i class="fa fa-lock"></i></button>';
+                        $btn = '<button class="popupEditUser" data-toggle="modal" data-target=".popupUser" data-id=' . $results->id . '  type="button" id="' . 'popupEditUser' . $results->id . '"><i class="fa fa-edit"></i></button>';
+                        $btn = $btn . ' <button data-id=' . $results->id . ' type="button" id="' . 'removeUserID-' . $results->id . '"><i class="fa fa-remove"></i></button>';
+                        $btn = $btn . '<button data-id=' . $results->id . ' type="button" id="' . 'lockUserID-' . $results->id . '" ><i class="fa fa-lock"></i></button>';
                         return $btn;
                     }
                 )

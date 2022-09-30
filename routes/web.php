@@ -10,34 +10,29 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-*/
+ */
 
 Route::get(
-    '/', function () { 
-        return view('welcome');
+    '/',
+    function () {
+        return Redirect()->route('login');
     }
 );
 
 Route::get(
-    'logout', 
-    '\App\Http\Controllers\Auth\LoginController@logout', function () {
+    'logout', '\App\Http\Controllers\Auth\LoginController@logout',
+    function () {
         session()->forget();
     }
 )->name('logout');
 // Backend section start
 
 Route::group(
-    ['prefix'=>'/admin','middleware'=>['auth']], function () {
+    ['prefix' => '/admin', 'middleware' => ['auth']], function () {
 
-            Route::get(
-                '/',
-                'AdminController@index'
-            )->name('admin');
-            // User route
-            Route::resource(
-                'users',
-                'UserController'
-            );
+        Route::get('/', 'AdminController@index')->name('admin');
+        // User route
+        Route::resource('users', 'UserController');
     }
 );
 

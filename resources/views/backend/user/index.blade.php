@@ -74,17 +74,17 @@
               </div>
             </div>
             <div class=" x_content">
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm"><i
-                  class="fa fa-user"></i> &nbsp;Thêm mới</button>
+              <button id="addUserBtn" type="button" class="btn btn-primary" data-toggle="modal"
+                data-target=".popupUser"><i class="fa fa-user"></i> &nbsp;Thêm mới</button>
               <table class="table table-striped projects" id="users-table">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Họ tên</th>
-                    <th>Email</th>
-                    <th>Nhóm</th>
-                    <th>Trạng Thái</th>
-                    <th></th>
+                    <th style="width: 1%">#</th>
+                    <th style="width: 20%!important">Họ tên</th>
+                    <th style="width: 20%!important">Email</th>
+                    <th style="width: 20%!important">Nhóm</th>
+                    <th style="width: 20%!important">Trạng Thái</th>
+                    <th style="width: 19%!important"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -97,13 +97,13 @@
                 <!-- modals -->
                 <!-- Small modal -->
 
-                <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true"
+                <div class="modal fade bs-example-modal-sm popupUser" tabindex="-1" role="dialog" aria-hidden="true"
                   style="display: none;">
                   <div class="modal-dialog modal-sm">
                     <div style="width: 550px;" class="modal-content">
 
                       <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel2">Thêm User</h4>
+                        <h4 class="modal-title" id="popupUserTitle">Thêm User</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                             aria-hidden="true">×</span>
                         </button>
@@ -111,11 +111,13 @@
                       <div class="modal-body">
                         <div>
                           <form id="addUserForm" class="form-horizontal">
+                            @csrf
                             <div class="form-group">
                               <label for="inputEmail3" class="col-sm-2 control-label">Tên</label>
                               <div style="width: 75%;" class="col-sm-10">
                                 <input type="text" class="form-control " name="addUserName" id="addUserName"
                                   placeholder="Nhập họ tên">
+                                <span id="name-err" class="error text-danger d-none"></span>
                               </div>
                             </div>
                             <div class="form-group">
@@ -123,6 +125,7 @@
                               <div style="width: 75%;" class="col-sm-10">
                                 <input type="email" class="form-control " name="addUserEmail" id="addUserEmail"
                                   placeholder="Nhập email">
+                                <span id="email-err" class="error text-danger d-none"></span>
                               </div>
                             </div>
                             <div class="form-group">
@@ -130,13 +133,15 @@
                               <div style="width: 75%;" class="col-sm-10">
                                 <input type="password" class="form-control " name="addUserPassword" id="addUserPassword"
                                   placeholder="Mật khẩu">
+                                <span id="password-err" class="error text-danger d-none"></span>
                               </div>
                             </div>
                             <div class="form-group">
                               <label for="inputPassword3" class="col-sm-2 control-label">Xác nhận</label>
                               <div style="width: 75%;" class="col-sm-10">
-                                <input type="password" class="form-control " name="addUserPasswordConfirm"
+                                <input type="password" class="form-control " name="addUserPassword"
                                   id="addUserPasswordConfirm" placeholder="Xác nhận mật khẩu">
+                                <span id="password_confirmation-err" class="error text-danger d-none"></span>
                               </div>
                             </div>
                             <div class="form-group">
@@ -148,19 +153,22 @@
                                   <option value="{{ $role }}">{{ $role }}</option>
                                   @endforeach
                                 </select>
+                                <span id="group_role-err" class="error text-danger d-none"></span>
                               </div>
                             </div>
                             <div class="form-group">
                               <label class="col-sm-2 control-label">Trạng thái</label>
                               <div style="width: 75%;" class="col-sm-10">
-                                <input type="checkbox" class="form-control" id="addUserStatus" checked
-                                  data-toggle="toggle" data-on="Hoạt động" data-off="Tạm khóa" value="TRUE"
-                                  data-onstyle="success" data-offstyle="danger">
+                                <input type="checkbox" class="form-control" id="addUserStatus" data-toggle="toggle"
+                                  checked data-on="Hoạt động" data-off="Tạm khóa" data-onstyle="success"
+                                  data-offstyle="danger">
+                                <span id="status-err" class="error text-danger d-none"></span>
                               </div>
                             </div>
                             <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                              <button type="button" class="btn btn-danger">Lưu</button>
+                              <button type="button" id="closePopupUserButton" class="btn btn-secondary"
+                                data-dismiss="modal">Hủy</button>
+                              <button id="addUserButton" type="submit" class="btn btn-danger">Lưu</button>
                             </div>
                           </form>
                         </div>
@@ -219,21 +227,73 @@
 <script>
   $(document).ready(function(){
      /**
-     * Create events for Adding Search
+     * Setup header for ajax
      * 
      * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
      * 
      * @returns {Json}
      */
+     $.ajaxSetup({
+        headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+    });
+    var userID = null;
+
     var dataSearch = {load: 'index'};
     getUserData();
-    $('#refreshPage').on('click', function (e) {
-    $('#status').prop('selectedIndex', -1);
-    $('#role').prop('selectedIndex', -1);
-    $(':input').val('');
-    dataSearch = {load: 'index'};
-    getUserData();
+    /**
+     * Create events for close popup
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Json}
+     */
+    $('#closePopupUserButton').on('click', function (e) {
+      $('#editUserButton').attr('id','addUserButton');
+      dataSearch = {load: 'index'};
+      getUserData();
     });
+    /**
+     * Reset form before display
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Json}
+     */
+    function clearErrorsMessage(){
+      $("#name-err").empty();
+      $("#email-err").empty();
+      $("#password-err").empty();
+      $("#password_confirmation-err").empty();
+      $("#status-err").empty();
+      $("#group_role-err").empty();
+    }
+    $('#addUserBtn').on('click',function(){
+      clearErrorsMessage();
+      $('#addUserForm').trigger("reset");
+    });
+    /**
+     * Create events for delete searched items
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Json}
+     */
+    $('#refreshPage').on('click', function (e) {
+      $('#status').prop('selectedIndex', -1);
+      $('#role').prop('selectedIndex', -1);
+      $(':input').val('');
+      dataSearch = {load: 'index'};
+      getUserData();
+    });
+    /**
+     * Create events for data searching
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Json}
+     */
     $('#search').on('click', function (e) {
       var name = $("#name").val();
       var email = $("#email").val();
@@ -257,7 +317,13 @@
           getUserData();
         }
     }) 
-    
+    /**
+     * Get data from server and display 
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Json}
+     */
     function getUserData(){
       var $data_table = $( '#users-table');
       $('#users-table').DataTable({
@@ -330,14 +396,15 @@
           { data: 'action', name: 'action', orderable: false, searchable: false},
       ],
     }); 
-    }  
+  }  
+
+      var userStatus = "1";
       $('#addUserStatus').change(function(){
-        if($(this).attr('checked')){
-              $(this).val('TRUE');
-        }else{
-              $(this).val('FALSE');
-        }
-    });
+        if (document.getElementById('addUserStatus').checked)
+        userStatus = '1';
+        else
+        userStatus = '0';
+      });
       /**
      * Save data to database
      * 
@@ -345,13 +412,13 @@
      * 
      * @returns {Response}
      */
-      $('#addUserForm').submit(function(e){
+        $('body').on('click', '#addUserButton', function (e) {
           e.preventDefault();
           var name = $("#addUserName").val();
           var email = $("#addUserEmail").val();
           var password = $("#addUserPassword").val();
-          var role = $("#role").val();
-          var status = $("#addUserStatus").val();
+          var password_confirmation = $("#addUserPasswordConfirm").val();
+          var role = $("#addUserRole").val();
           $.ajax({
             url: "{{route('users.store')}}",
             type: "POST",
@@ -359,8 +426,9 @@
               name: name,
               email: email,
               password: password,
-              role: role,
-              status: status,
+              password_confirmation: password_confirmation,
+              group_role: role,
+              is_active: userStatus,
             },
             dataType: 'json',
             success: function (data) {
@@ -376,20 +444,107 @@
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
               }
             })
-
             Toast.fire({
               icon: 'success',
-              title: 'New Role Added'
+              title: 'Thêm mới user thành công'
             })
-
             },
-            error: function (data) {
-            //   // console.log(data);
-            //   Swal.fire({
-            //   icon: 'error',
-            //   title: 'Oops...',
-            //   text: (typeof data.responseJSON.permission =='undefined')  ? data.responseJSON.name  : data.responseJSON.permission,
-            // })
+            beforeSend: function(){
+             clearErrorsMessage();
+            },
+            error: function (err) {
+              $.each(err.responseJSON.errors, function (key, value) {
+                $("#" + key + '-err').html(value[0]);
+                $("#" + key + '-err').next().removeClass('d-none');
+              });
+            }
+        });
+    });
+    /**
+     * Append user info to input field
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Response}
+     */
+     $(document).on('click','.popupEditUser', function(){
+      $('#popupUserTitle').html('Chỉnh sửa User')
+      var idUSer = $(this).data("id");
+      $.ajax({
+            url: `{{ url('/admin/users/'.'${idUSer}') }}`,
+            type: "GET",
+            data: {
+              id: idUSer,
+            },
+            dataType: 'json',
+            success: function (data) {
+              userID = data.user.id;
+              $('#addUserButton').attr('id','editUserButton');
+              $("#addUserName").val(data.user.name);
+              $("#addUserEmail").val(data.user.email);
+              $("#addUserRole").val(data.user.group_role); 
+              data.user.is_active === 1 ? $('#addUserStatus').bootstrapToggle('on') : $('#addUserStatus').bootstrapToggle('off');
+            },
+            error: function (err) {
+              alert('Somethings went wrong!');
+            },
+        });
+    })
+    /**
+     * Update user data to database
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Response}
+     */
+        $('body').on('click', '#editUserButton', function (e) {
+          e.preventDefault();
+          clearErrorsMessage();
+          var name = $("#addUserName").val();
+          var email = $("#addUserEmail").val();
+          var password = $("#addUserPassword").val();
+          var password_confirmation = $("#addUserPasswordConfirm").val();
+          var role = $("#addUserRole").val();
+          $.ajax({
+            url: `{{ url('/admin/users/'.'${userID}') }}`,
+            type: "PUT",
+            data: {
+              id: userID,
+              name: name,
+              email: email,
+              password: password,
+              password_confirmation: password_confirmation,
+              group_role: role,
+              is_active: userStatus,
+              _method: 'PUT',
+            },
+            dataType: 'json',
+            success: function (data) {
+              $("#closePopupUserButton").trigger("click");
+              const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              }
+            })
+            Toast.fire({
+              icon: 'success',
+              title: 'Chỉnh sửa user thành công'
+            })
+            },
+            beforeSend: function(){
+             clearErrorsMessage();
+            },
+            error: function (err) {
+              $.each(err.responseJSON.errors, function (key, value) {
+                $("#" + key + '-err').html(value[0]);
+                $("#" + key + '-err').next().removeClass('d-none');
+              });
             }
         });
     });
