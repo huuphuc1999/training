@@ -1,7 +1,7 @@
 <?php
 /**
  * Login controller
- * 
+ *
  * PHP version 7
  *
  * @category  Controllers
@@ -14,16 +14,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-use App\User;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
+
 /**
  * Handle user authentication
- * 
+ *
  * @category  Controllers
  * @package   App
  * @author    Phuc <phan.phuc.rcvn2012@gmail.com>
@@ -42,7 +43,7 @@ class LoginController extends Controller
     | redirecting them to your home screen. The controller uses a trait
     | to conveniently provide its functionality to your applications.
     |
-    */
+     */
 
     use AuthenticatesUsers;
 
@@ -56,22 +57,22 @@ class LoginController extends Controller
 
     /**
      * Create a new controller instance.
-     * 
-     * @param App\User $user submitted by users
-     * 
+     *
+     * @param App\Models\User $user submitted by users
+     *
      * @return void
      */
     public function __construct(User $user)
     {
         $this->user = $user;
         $this->middleware('guest')->except('logout');
-        $this->now = date_format(Carbon::now('Asia/Ho_Chi_Minh'), 'Y/m/d: H-i-s');
+        $this->now = date_format(Carbon::now('Asia/Ho_Chi_Minh'), 'Y/m/d:H-i-s');
     }
     /**
      * Handle user login.
-     * 
+     *
      * @param \Illuminate\Http\Request $request submitted by users
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function login(Request $request)
@@ -82,12 +83,12 @@ class LoginController extends Controller
             "email.email" => "Email không đúng định dạng",
             "email.exists" => "Email không tồn tại",
             "password.required" => "Mật khẩu không được để trống",
-            "password.min" => "Mật khẩu phải lớn hơn 6 ký tự"
+            "password.min" => "Mật khẩu phải lớn hơn 6 ký tự",
         ];
-        
+
         // validate the form data
-        $validator = Validator::make($request->all(), ['email' => 'required|email|exists:users,email','password' => 'required|min:6'], $messages);
-    
+        $validator = Validator::make($request->all(), ['email' => 'required|email|exists:users,email', 'password' => 'required|min:6'], $messages);
+
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         } else {
@@ -100,7 +101,7 @@ class LoginController extends Controller
                 return redirect()->intended(route('admin'));
             }
             // if unsuccessful -> redirect back
-            return redirect()->back()->withInput($request->only('email', 'remember'))->withErrors(['password' => 'Mật khẩu không chính xác.',]);
+            return redirect()->back()->withInput($request->only('email', 'remember'))->withErrors(['password' => 'Mật khẩu không chính xác.']);
         }
     }
 }
