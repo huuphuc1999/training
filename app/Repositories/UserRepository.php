@@ -61,6 +61,30 @@ class UserRepository extends EloquentRepository
             ->pluck('group_role');
     }
     /**
+     * Lock user or unlock user
+     *
+     * @param $id use for find specified user
+
+     * @return mixed
+     */
+    public function userLockOrUnlock($id)
+    {
+        $status = $this->model::where('id', $id)->pluck('is_active')->first();
+        return $status === 1 ? $this->model::where('id', $id)->update(['is_active' => 0]) : $this->model::where('id', $id)->update(['is_active' => 1]);
+
+    }
+    /**
+     * Update status user to deleted.
+     *
+     * @param $id use for find specified user
+
+     * @return mixed
+     */
+    public function deleteUser($id)
+    {
+        return $this->model::where('id', $id)->update(['is_delete' => 1]);
+    }
+    /**
      * Handle user searching data.
      *
      * @param \Illuminate\Http\Request $request submitted by users
@@ -74,7 +98,7 @@ class UserRepository extends EloquentRepository
             if ($request->load == 'index') {
                 $results = $querySearch
                     ->where('is_delete', '===', 0)
-                    ->latest()
+                    ->orderBy('id', 'DESC')
                     ->get();
             }
             if ($request->load == 'search') {
@@ -107,8 +131,8 @@ class UserRepository extends EloquentRepository
                     'action',
                     function ($results) {
                         $btn = '<button class="popupEditUser" data-toggle="modal" data-target=".popupUser" data-id=' . $results->id . '  type="button" id="' . 'popupEditUser' . $results->id . '"><i class="fa fa-edit"></i></button>';
-                        $btn = $btn . ' <button data-id=' . $results->id . ' type="button" id="' . 'removeUserID-' . $results->id . '"><i class="fa fa-remove"></i></button>';
-                        $btn = $btn . '<button data-id=' . $results->id . ' type="button" id="' . 'lockUserID-' . $results->id . '" ><i class="fa fa-lock"></i></button>';
+                        $btn = $btn . ' <button class="removeUserButton"  data-id=' . $results->id . ' type="button" id="' . 'removeUserID-' . $results->id . '"><i class="fa fa-remove"></i></button>';
+                        $btn = $btn . '<button class="lockUserButton" data-id=' . $results->id . ' type="button" id="' . 'lockUserID-' . $results->id . '" ><i class="fa fa-lock"></i></button>';
                         return $btn;
                     }
                 )

@@ -33,6 +33,13 @@ Route::group(
         Route::get('/', 'AdminController@index')->name('admin');
         // User route
         Route::resource('users', 'UserController');
+        Route::post('users/status/{id}', 'UserController@userLockOrUnlock')->name('users.status');
+        // Product route
+        Route::get('products', 'ProductController@index')->name('products.index');
+        Route::get('products/details/{product}', 'ProductController@show')->name('products.show');
+        Route::post('products', 'ProductController@store')->name('products.store');
+        Route::delete('products/delete/{product}', 'ProductController@destroy')->name('products.destroy');
+
     }
 );
 

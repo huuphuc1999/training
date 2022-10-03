@@ -1,6 +1,6 @@
 <?php
 /**
- * Use for validator reuqest
+ * Use for validator request
  *
  * PHP version 7
  *

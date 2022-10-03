@@ -1,7 +1,7 @@
 <?php
 /**
- * Base repository 
- * 
+ * Base repository
+ *
  * PHP version 7
  *
  * @category  EloquentRepository
@@ -14,9 +14,10 @@
 namespace App\Repositories;
 
 use App\Repositories\RepositoryInterface;
+
 /**
  * A template for common problems
- * 
+ *
  * @category  EloquentRepository
  * @package   App
  * @author    Phuc <phan.phuc.rcvn2012@gmail.com>
@@ -28,7 +29,7 @@ abstract class EloquentRepository implements RepositoryInterface
 {
     /**
      *  Declare variable.
-     * 
+     *
      * @var \Illuminate\Database\Eloquent\Model
      */
     protected $model;
@@ -43,14 +44,14 @@ abstract class EloquentRepository implements RepositoryInterface
 
     /**
      * Get model
-     * 
+     *
      * @return string
      */
     abstract public function getModel();
 
     /**
      * Set model
-     * 
+     *
      * @return string
      */
     public function setModel()
@@ -62,7 +63,7 @@ abstract class EloquentRepository implements RepositoryInterface
 
     /**
      * Get All
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function getAll()
@@ -73,9 +74,9 @@ abstract class EloquentRepository implements RepositoryInterface
 
     /**
      * Get one
-     * 
+     *
      * @param $id use for query
-     * 
+     *
      * @return mixed
      */
     public function find($id)
@@ -87,9 +88,9 @@ abstract class EloquentRepository implements RepositoryInterface
 
     /**
      * Create
-     * 
+     *
      * @param array $attributes use for create record
-     * 
+     *
      * @return mixed
      */
     public function create(array $attributes)
@@ -100,10 +101,10 @@ abstract class EloquentRepository implements RepositoryInterface
 
     /**
      * Update
-     * 
+     *
      * @param $id         use for find specified user
      * @param array $attributes use for update record
-     * 
+     *
      * @return bool|mixed
      */
     public function update($id, array $attributes)
@@ -121,7 +122,7 @@ abstract class EloquentRepository implements RepositoryInterface
      * Delete
      *
      * @param $id use for find specified user
-     * 
+     *
      * @return bool
      */
     public function delete($id)

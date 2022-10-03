@@ -56,23 +56,22 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            return $this->userRepository->userSearching($request);
+        try {
+            if ($request->ajax()) {
+                return $this->userRepository->userSearching($request);
+            }
+            $groupRole = $this->userRepository->getGroupRole();
+            return view('backend.user.index', compact('groupRole'));
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    'message' => 'errors',
+                    "name" => "Somethings went wrong, try agian!",
+                    "type" => "RESPONSE_FALSE",
+                ], Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
-        $groupRole = $this->userRepository->getGroupRole();
-        return view('backend.user.index', compact('groupRole'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -82,17 +81,55 @@ class UserController extends Controller
      */
     public function store(AddUserRequest $request)
     {
-        $this->userRepository->create($request->all());
-        return response()->json(
-            [
-                'code' => 200,
-                "name" => "New user added",
-                "type" => "RESPONSE_OK",
-                "message" => "success",
-            ], Response::HTTP_OK
-        );
+        try {
+            $this->userRepository->create($request->all());
+            return response()->json(
+                [
+                    'code' => 200,
+                    "name" => "New user added",
+                    "type" => "RESPONSE_OK",
+                    "message" => "success",
+                ], Response::HTTP_OK
+            );
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    'message' => 'errors',
+                    "name" => "Somethings went wrong, try agian!",
+                    "type" => "RESPONSE_FALSE",
+                ], Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+
     }
 
+    /**
+     *  Lock user or unlock user
+     *
+     * @param int $id used to update the user
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function userLockOrUnlock($id)
+    {
+        try {
+            $this->userRepository->userLockOrUnlock($id);
+            return response()->json(
+                [
+                    'message' => 'Update status user successfully',
+                    "type" => "RESPONSE_OK",
+                ], Response::HTTP_OK
+            );
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    'message' => 'errors',
+                    "name" => "Somethings went wrong, try agian!",
+                    "type" => "RESPONSE_FALSE",
+                ], Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
     /**
      * Display the specified resource.
      *
@@ -102,29 +139,27 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = $this->userRepository->find($id);
-        return response()->json(
-            [
-                'user' => $user,
-                'message' => 'success',
-                "name" => "Get user successfully",
-                "type" => "RESPONSE_OK",
-            ], Response::HTTP_OK
-        );
-    }
+        try {
+            $user = $this->userRepository->find($id);
+            return response()->json(
+                [
+                    'user' => $user,
+                    'message' => 'success',
+                    "name" => "Get user successfully",
+                    "type" => "RESPONSE_OK",
+                ], Response::HTTP_OK
+            );
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    'message' => 'errors',
+                    "name" => "Somethings went wrong, try agian!",
+                    "type" => "RESPONSE_FALSE",
+                ], Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id used to edit the user
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -135,17 +170,28 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, $id)
     {
-        $data = $request->all();
-        $id = $request->id;
-        !empty($data['password']) ? $data['password'] = Hash::make($data['password']) : Arr::except($data, array('password'));
-        $this->userRepository->update($id, $data);
-        return response()->json(
-            [
-                'message' => 'success',
-                "name" => "Update user successfully",
-                "type" => "RESPONSE_OK",
-            ], Response::HTTP_OK
-        );
+        try {
+            $data = $request->all();
+            $id = $request->id;
+            !empty($data['password']) ? $data['password'] = Hash::make($data['password']) : Arr::except($data, array('password'));
+            $this->userRepository->update($id, $data);
+            return response()->json(
+                [
+                    'message' => 'success',
+                    "name" => "Update user successfully",
+                    "type" => "RESPONSE_OK",
+                ], Response::HTTP_OK
+            );
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    'message' => 'errors',
+                    "name" => "Somethings went wrong, try agian!",
+                    "type" => "RESPONSE_FALSE",
+                ], Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+
     }
 
     /**
@@ -157,6 +203,24 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $status = $this->userRepository->deleteUser($id);
+            return response()->json(
+                [
+                    'message' => 'success',
+                    "name" => "Delete user successfully",
+                    "type" => "RESPONSE_OK",
+                ], Response::HTTP_OK
+            );
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    'message' => 'errors',
+                    "name" => "Somethings went wrong, try agian!",
+                    "type" => "RESPONSE_FALSE",
+                ], Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+
     }
 }
