@@ -95,12 +95,7 @@ class UserController extends Controller
     {
         try {
             $this->userRepository->userLockOrUnlock($id);
-            return response()->json(
-                [
-                    'message' => 'Update status user successfully',
-                    "type" => "RESPONSE_OK",
-                ], Response::HTTP_OK
-            );
+            return $this->successResponce($message = 'Change status user succesfully');
         } catch (\Throwable $th) {
             return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
         }

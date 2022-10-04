@@ -57,7 +57,6 @@ trait ApiResponse
     {
         return response()->json(
             [
-                'code' => 200,
                 "name" => "Handling failure",
                 "type" => "RESPONSE_FALSE",
                 "message" => $message,

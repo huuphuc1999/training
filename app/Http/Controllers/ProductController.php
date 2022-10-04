@@ -60,7 +60,7 @@ class ProductController extends Controller
             }
             return view('backend.user.index');
         } catch (\Throwable $th) {
-            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!'); //phpcs:ignore
         }
     }
     /**
@@ -77,7 +77,7 @@ class ProductController extends Controller
             return $this->successResponce($message = 'New product added');
 
         } catch (\Throwable $th) {
-            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!'); //phpcs:ignore
         }
 
     }
@@ -95,7 +95,7 @@ class ProductController extends Controller
             $this->productRepository->updateProduct($id, $request);
             return $this->successResponce($message = 'Update product successfully');
         } catch (\Throwable $th) {
-            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!'); //phpcs:ignore
         }
 
     }
@@ -110,9 +110,9 @@ class ProductController extends Controller
     {
         try {
             $product = $this->productRepository->getProductDetails($id);
-            return $this->successResponce($product, $message = 'Get product details successfully');
+            return $this->successResponce($product, $message = 'Get product details successfully'); //phpcs:ignore
         } catch (\Throwable $th) {
-            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!'); //phpcs:ignore
         }
 
     }
@@ -129,7 +129,7 @@ class ProductController extends Controller
             $this->productRepository->deleteProduct($id);
             return $this->successResponce($message = 'Delete product successfully');
         } catch (\Throwable $th) {
-            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!'); //phpcs:ignore
         }
 
     }

@@ -847,7 +847,7 @@
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'OK, khóa!' + userData.name
+        confirmButtonText: 'OK, khóa ' + userData.name
         }).then((result) => {
           if (result.isConfirmed) {
             $.ajax({
