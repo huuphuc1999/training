@@ -23,15 +23,9 @@
     <!-- sidebar menu -->
     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
       <div class="menu_section">
-        <h3>General</h3>
+        <h3>River Crane Vietnam</h3>
         <ul class="nav side-menu">
-          <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
-            <ul class="nav child_menu">
-              <li><a href="/">Dashboard</a></li>
-            </ul>
-          </li>
-
-          <li><a><i class="fa fa-edit"></i> User <span class="fa fa-chevron-down"></span></a>
+          <li><a><i class="fa fa-edit"></i> Managerment <span class="fa fa-chevron-down"></span></a>
             <ul class="nav child_menu">
               <li><a href="{{route('users.index')}}">Show users</a></li>
             </ul>

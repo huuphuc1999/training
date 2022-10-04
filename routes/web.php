@@ -38,6 +38,7 @@ Route::group(
         Route::get('products', 'ProductController@index')->name('products.index');
         Route::get('products/details/{product}', 'ProductController@show')->name('products.show');
         Route::post('products', 'ProductController@store')->name('products.store');
+        Route::post('products/update/{product}', 'ProductController@update')->name('products.update');
         Route::delete('products/delete/{product}', 'ProductController@destroy')->name('products.destroy');
 
     }

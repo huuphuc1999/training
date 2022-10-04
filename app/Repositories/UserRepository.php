@@ -85,6 +85,17 @@ class UserRepository extends EloquentRepository
         return $this->model::where('id', $id)->update(['is_delete' => 1]);
     }
     /**
+     * Get user role
+     *
+     * @param $id use for find specified user
+
+     * @return mixed
+     */
+    public function getUserRole($id)
+    {
+        return $this->model::where('id', $id)->pluck('group_role')->first();
+    }
+    /**
      * Handle user searching data.
      *
      * @param \Illuminate\Http\Request $request submitted by users

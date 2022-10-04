@@ -60,13 +60,7 @@ class ProductController extends Controller
             }
             return view('backend.user.index');
         } catch (\Throwable $th) {
-            return response()->json(
-                [
-                    'message' => 'errors',
-                    "name" => "Somethings went wrong, try agian!",
-                    "type" => "RESPONSE_FALSE",
-                ], Response::HTTP_INTERNAL_SERVER_ERROR
-            );
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
         }
     }
     /**
@@ -78,26 +72,31 @@ class ProductController extends Controller
      */
     public function store(AddProductRequest $request)
     {
-        return $request->all();
-        // try {
-        //     $this->userRepository->create($request->all());
-        //     return response()->json(
-        //         [
-        //             'code' => 200,
-        //             "name" => "New user added",
-        //             "type" => "RESPONSE_OK",
-        //             "message" => "success",
-        //         ], Response::HTTP_OK
-        //     );
-        // } catch (\Throwable $th) {
-        //     return response()->json(
-        //         [
-        //             'message' => 'errors',
-        //             "name" => "Somethings went wrong, try agian!",
-        //             "type" => "RESPONSE_FALSE",
-        //         ], Response::HTTP_INTERNAL_SERVER_ERROR
-        //     );
-        // }
+        try {
+            $this->productRepository->addProduct($request);
+            return $this->successResponce($message = 'New product added');
+
+        } catch (\Throwable $th) {
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
+        }
+
+    }
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request submitted by users
+     * @param int                      $id      product
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function update(AddProductRequest $request, $id)
+    {
+        try {
+            $this->productRepository->updateProduct($id, $request);
+            return $this->successResponce($message = 'Update product successfully');
+        } catch (\Throwable $th) {
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
+        }
 
     }
     /**
@@ -111,22 +110,9 @@ class ProductController extends Controller
     {
         try {
             $product = $this->productRepository->getProductDetails($id);
-            return response()->json(
-                [
-                    'product' => $product,
-                    'message' => 'success',
-                    "name" => "Get user successfully",
-                    "type" => "RESPONSE_OK",
-                ], Response::HTTP_OK
-            );
+            return $this->successResponce($product, $message = 'Get product details successfully');
         } catch (\Throwable $th) {
-            return response()->json(
-                [
-                    'message' => 'errors',
-                    "name" => "Somethings went wrong, try agian!",
-                    "type" => "RESPONSE_FALSE",
-                ], Response::HTTP_INTERNAL_SERVER_ERROR
-            );
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
         }
 
     }
@@ -141,21 +127,9 @@ class ProductController extends Controller
     {
         try {
             $this->productRepository->deleteProduct($id);
-            return response()->json(
-                [
-                    'message' => 'success',
-                    "name" => "Delete product successfully",
-                    "type" => "RESPONSE_OK",
-                ], Response::HTTP_OK
-            );
+            return $this->successResponce($message = 'Delete product successfully');
         } catch (\Throwable $th) {
-            return response()->json(
-                [
-                    'message' => 'errors',
-                    "name" => "Somethings went wrong, try agian!",
-                    "type" => "RESPONSE_FALSE",
-                ], Response::HTTP_INTERNAL_SERVER_ERROR
-            );
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
         }
 
     }

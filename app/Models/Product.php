@@ -11,9 +11,15 @@ class Product extends Model
      *
      * @var array
      */
+    protected $primaryKey = 'product_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
     protected $table = 'products';
 
     protected $fillable = [
-        'product_name', 'product_image', 'product_price', 'is_sales', 'description',
+        'product_id', 'product_name', 'product_image', 'product_price', 'is_sales', 'description',
     ];
 }

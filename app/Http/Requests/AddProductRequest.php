@@ -1,6 +1,6 @@
 <?php
 /**
- * Use for validator request
+ * Product for validator request
  *
  * PHP version 7
  *
@@ -45,10 +45,10 @@ class AddProductRequest extends FormRequest
     public function rules()
     {
         return [
-            'productName' => 'required|min:5',
-            'productPrice' => 'required|min:0|numeric',
-            'productStatus' => 'in:0,1',
-            'productImage' => 'mimes:jpeg,jpg,png|max:2048|dimensions:max_width=1024,max_height=1024',
+            'product_name' => 'required|min:5',
+            'product_price' => 'required|min:0|numeric',
+            'is_sales' => 'in:0,1',
+            'product_image' => 'sometimes|mimes:jpeg,jpg,png|max:2048|dimensions:max_width=1024,max_height=1024',
         ];
     }
     /**
@@ -60,16 +60,16 @@ class AddProductRequest extends FormRequest
     {
         return [
 
-            "productName.required" => "Vui lòng nhập tên sản phẩm",
-            "productName.min" => "Sản phẩm phải lớn hơn 5 ký tự",
+            "product_name.required" => "Vui lòng nhập tên sản phẩm",
+            "product_name.min" => "Sản phẩm phải lớn hơn 5 ký tự",
 
-            "productPrice.required" => "Giá bán không được để trống",
-            "productPrice.numeric" => "Giá bán chỉ được nhập số",
-            "productPrice.min" => "Giá bán không được nhỏ hơn 0",
+            "product_price.required" => "Giá bán không được để trống",
+            "product_price.numeric" => "Giá bán chỉ được nhập số",
+            "product_price.min" => "Giá bán không được nhỏ hơn 0",
 
-            "productImage.mimes" => "Chỉ chấp nhận file png, jpg, jpeg",
-            "productImage.max" => "Dung lượng ảnh không được vượt quá 2Mb",
-            "productImage.dimensions" => "Ảnh quá lớn",
+            "product_image.mimes" => "Chỉ chấp nhận file png, jpg, jpeg",
+            "product_image.max" => "Dung lượng ảnh không được vượt quá 2Mb",
+            "product_image.dimensions" => "Ảnh quá lớn",
 
         ];
     }
@@ -78,10 +78,10 @@ class AddProductRequest extends FormRequest
      *
      * @return array
      */
-    // protected function prepareForValidation()
-    // {
-    //     if ($this->productImage == null) {
-    //         $this->request->remove('productImage');
-    //     }
-    // }
+    protected function prepareForValidation()
+    {
+        if ($this->productImage == null) {
+            $this->request->remove('product_image');
+        }
+    }
 }

@@ -28,6 +28,13 @@ use Yajra\Datatables\Datatables;
 class ProductRepository extends EloquentRepository
 {
     /**
+     * EloquentRepository constructor.
+     */
+    // public function __construct()
+    // {
+    //     $this->now = Carbon::now('Asia/Ho_Chi_Minh');
+    // }
+    /**
      * Get model
      *
      * @return string
@@ -35,16 +42,6 @@ class ProductRepository extends EloquentRepository
     public function getModel()
     {
         return \App\Models\Product::class;
-    }
-    /**
-     * Get all users that are not deleted.
-     *
-     * @return mixed
-     */
-    public function getAllProduct()
-    {
-        return $this->model::orderBy('product_id', 'DESC')
-            ->paginate(10);
     }
     /**
      * Show product details
@@ -69,6 +66,44 @@ class ProductRepository extends EloquentRepository
         return $this->model::where('product_id', $id)->delete();
     }
     /**
+     * Store product
+     *
+     * @param \Illuminate\Http\Request $request submitted by users
+
+     * @return mixed
+     */
+    public function addProduct($request)
+    {
+        $data = $request->all();
+
+        $data['product_id'] = $request->product_name[0] . floor(time() - 999999999);
+        if ($request->product_image) {
+            $filename = $request->product_image->getClientOriginalName();
+            $path = $request->file('product_image')->storeAs('public/backend/images/products', $filename);
+            $data['product_image'] = 'backend/images/products/' . $filename;
+        }
+        return $this->model::create($data);
+    }
+    /**
+     * Update product
+     *
+     * @param $id      product for find specified product
+     * @param \Illuminate\Http\Request $request submitted by users
+
+     * @return mixed
+     */
+    public function updateProduct($id, $request)
+    {
+        $data = $request->all();
+        if ($request->product_image) {
+            $filename = $request->product_image->getClientOriginalName();
+            $path = $request->file('product_image')->storeAs('public/backend/images/products', $filename);
+            $data['product_image'] = 'backend/images/products/' . $filename;
+        }
+
+        return $this->model::where('product_id', $id)->update($data);
+    }
+    /**
      * Handle user searching data.
      *
      * @param \Illuminate\Http\Request $request submitted by users
@@ -81,7 +116,7 @@ class ProductRepository extends EloquentRepository
             $querySearch = \App\Models\Product::query();
             if ($request->load == 'index') {
                 $results = $querySearch
-                    ->orderBy('product_id', 'DESC')
+                    ->latest()
                     ->get();
             }
             if ($request->load == 'search') {

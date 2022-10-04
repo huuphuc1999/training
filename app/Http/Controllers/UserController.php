@@ -63,13 +63,7 @@ class UserController extends Controller
             $groupRole = $this->userRepository->getGroupRole();
             return view('backend.user.index', compact('groupRole'));
         } catch (\Throwable $th) {
-            return response()->json(
-                [
-                    'message' => 'errors',
-                    "name" => "Somethings went wrong, try agian!",
-                    "type" => "RESPONSE_FALSE",
-                ], Response::HTTP_INTERNAL_SERVER_ERROR
-            );
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
         }
     }
     /**
@@ -83,22 +77,9 @@ class UserController extends Controller
     {
         try {
             $this->userRepository->create($request->all());
-            return response()->json(
-                [
-                    'code' => 200,
-                    "name" => "New user added",
-                    "type" => "RESPONSE_OK",
-                    "message" => "success",
-                ], Response::HTTP_OK
-            );
+            return $this->successResponce($message = 'New user added');
         } catch (\Throwable $th) {
-            return response()->json(
-                [
-                    'message' => 'errors',
-                    "name" => "Somethings went wrong, try agian!",
-                    "type" => "RESPONSE_FALSE",
-                ], Response::HTTP_INTERNAL_SERVER_ERROR
-            );
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
         }
 
     }
@@ -121,13 +102,7 @@ class UserController extends Controller
                 ], Response::HTTP_OK
             );
         } catch (\Throwable $th) {
-            return response()->json(
-                [
-                    'message' => 'errors',
-                    "name" => "Somethings went wrong, try agian!",
-                    "type" => "RESPONSE_FALSE",
-                ], Response::HTTP_INTERNAL_SERVER_ERROR
-            );
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
         }
     }
     /**
@@ -141,22 +116,9 @@ class UserController extends Controller
     {
         try {
             $user = $this->userRepository->find($id);
-            return response()->json(
-                [
-                    'user' => $user,
-                    'message' => 'success',
-                    "name" => "Get user successfully",
-                    "type" => "RESPONSE_OK",
-                ], Response::HTTP_OK
-            );
+            return $this->successResponce($user, $message = 'Get user details successfully');
         } catch (\Throwable $th) {
-            return response()->json(
-                [
-                    'message' => 'errors',
-                    "name" => "Somethings went wrong, try agian!",
-                    "type" => "RESPONSE_FALSE",
-                ], Response::HTTP_INTERNAL_SERVER_ERROR
-            );
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
         }
 
     }
@@ -175,21 +137,9 @@ class UserController extends Controller
             $id = $request->id;
             !empty($data['password']) ? $data['password'] = Hash::make($data['password']) : Arr::except($data, array('password'));
             $this->userRepository->update($id, $data);
-            return response()->json(
-                [
-                    'message' => 'success',
-                    "name" => "Update user successfully",
-                    "type" => "RESPONSE_OK",
-                ], Response::HTTP_OK
-            );
+            return $this->successResponce($message = 'Update user successfully');
         } catch (\Throwable $th) {
-            return response()->json(
-                [
-                    'message' => 'errors',
-                    "name" => "Somethings went wrong, try agian!",
-                    "type" => "RESPONSE_FALSE",
-                ], Response::HTTP_INTERNAL_SERVER_ERROR
-            );
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
         }
 
     }
@@ -204,22 +154,14 @@ class UserController extends Controller
     public function destroy($id)
     {
         try {
+            $role = $this->userRepository->getUserRole($id);
+            if ($role == 'Admin') {
+                return $this->errorsResponce($message = 'You cannot delete Admin!');
+            }
             $status = $this->userRepository->deleteUser($id);
-            return response()->json(
-                [
-                    'message' => 'success',
-                    "name" => "Delete user successfully",
-                    "type" => "RESPONSE_OK",
-                ], Response::HTTP_OK
-            );
+            return $this->successResponce($message = 'Delete user successfully');
         } catch (\Throwable $th) {
-            return response()->json(
-                [
-                    'message' => 'errors',
-                    "name" => "Somethings went wrong, try agian!",
-                    "type" => "RESPONSE_FALSE",
-                ], Response::HTTP_INTERNAL_SERVER_ERROR
-            );
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!');
         }
 
     }
