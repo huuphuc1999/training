@@ -13,10 +13,13 @@
  */
 namespace App\Http\Controllers;
 
+use App\Exports\CustomersExport;
 use App\Http\Requests\AddCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
+use App\Imports\CustomersImport;
 use App\Repositories\CustomerRepository;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 /**
  * Handle CRUD Customer
@@ -91,12 +94,12 @@ class CustomerController extends Controller
      */
     public function update(UpdateCustomerRequest $request, $id)
     {
-        // try {
-        $this->customerRepository->update($id, $request->all());
-        return $this->successResponce($message = 'Update customer successfully');
-        // } catch (\Throwable $th) {
-        //     return $this->errorsResponce($message = 'Somethings went wrong, try agian!'); //phpcs:ignore
-        // }
+        try {
+            $this->customerRepository->update($id, $request->all());
+            return $this->successResponce($message = 'Update customer successfully');
+        } catch (\Throwable $th) {
+            return $this->errorsResponce($message = 'Somethings went wrong, try agian!'); //phpcs:ignore
+        }
 
     }
     /**
@@ -115,5 +118,27 @@ class CustomerController extends Controller
             return $this->errorsResponce($message = 'Somethings went wrong, try agian!'); //phpcs:ignore
         }
 
+    }
+    /**
+     * Export customer resources
+     *
+     * @param \Illuminate\Http\Request $request submitted by users
+     *
+     * @return CSV file
+     */
+    public function export(Request $request)
+    {
+        return Excel::download(new CustomersExport($request), 'customers.xlsx');
+    }
+    /**
+     * Export customer resources
+     *
+     * @return void
+     */
+    public function import()
+    {
+        Excel::import(new CustomersImport, request()->file('customersFile'));
+
+        return $this->successResponce($message = 'Import customers successfully');
     }
 }

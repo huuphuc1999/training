@@ -224,7 +224,7 @@
               <button id="importCSV" style="margin-right: 20px" type="button" class="btn btn-info "><i
                   class="fa fa-upload"></i> &nbsp;Import
                 CSV</button>
-              <button id="exportCSV" type="button" class="btn btn-success"><i class="fa fa-download"></i> &nbsp;Export
+              <button type="button" id="exportCSV" class="btn btn-success"><i class="fa fa-download"></i> &nbsp;Export
                 CSV</button>
               <div style="margin-top: 5px;
                 float: right;
@@ -1589,6 +1589,45 @@
           getCustomerData();
         }
     }) 
+    $('#exportCSV').click(function(){
+      var name = $("#customerSearchName").val();
+      var email = $("#customerSearchEmail").val();
+      var address = $("#customerSearchAddress").val();
+      var status = $('#customerSearchStatus').val();
+        if( (name == '') && (status == null) && (email == '') && (address == '')){
+          dataSearch = {
+            load:'index'
+          };
+        }else{
+          dataSearch = {
+            name:name, 
+            email:email, 
+            address:address,
+            status:status,
+            load:'search'
+          };
+        };
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "Xuất file excel khách hàng "+  " không",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Có, Xuất file '
+      }).then((result) => {
+        if (result.isConfirmed) {
+          var url = "{{URL::to('/admin/customers/export')}}?" + $.param(dataSearch);
+          window.location = url;  
+          Swal.fire(
+            'Thành công!',
+            'Xuất file excel thành công',
+            'success'
+          )
+      }
+    })
+        
+    });
     /**
      * Get data from server and display 
      * 
@@ -1798,6 +1837,7 @@
             }
         });
     });
+   
 });
 </script>
 @endpush

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'HomeController@redirectRoute');
 
-Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout')->name('logout');
+Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout')->name('logout'); //phpcs:ignore
 // Backend section start
 
 Route::group(
@@ -35,7 +35,9 @@ Route::group(
         Route::get('customers/details/{customers}', 'CustomerController@show')->name('customers.show'); //phpcs:ignore
         Route::post('customers', 'CustomerController@store')->name('customers.store'); //phpcs:ignore
         Route::post('customers/update/{customers}', 'CustomerController@update')->name('customers.update'); //phpcs:ignore
-        Route::delete('customers/delete/{customers}', 'CustomerController@destroy')->name('customers.destroy'); //phpcs:ignore
+        // Customer route for excel
+        Route::get('customers/export', 'CustomerController@export')->name('customers.export'); //phpcs:ignore
+        Route::post('customers/import', 'CustomerController@import')->name('customers.import'); //phpcs:ignore
 
     }
 );
