@@ -143,7 +143,7 @@ class UserRepository extends EloquentRepository
                     function ($results) {
                         $btn = '<button class="popupEditUser" data-toggle="modal" data-target=".popupUser" data-id=' . $results->id . '  type="button" id="' . 'popupEditUser' . $results->id . '"><i class="fa fa-edit"></i></button>';
                         $btn = $btn . ' <button class="removeUserButton"  data-id=' . $results->id . ' type="button" id="' . 'removeUserID-' . $results->id . '"><i class="fa fa-remove"></i></button>';
-                        $btn = $btn . '<button class="lockUserButton" data-id=' . $results->id . ' type="button" id="' . 'lockUserID-' . $results->id . '" ><i class="fa fa-lock"></i></button>';
+                        $results->is_active === 1 ? $btn = $btn . '<button class="lockUserButton" data-id=' . $results->id . ' type="button" id="' . 'lockUserID-' . $results->id . '" ><i class="fa fa-unlock"></i></button>' : $btn = $btn . '<button class="lockUserButton" data-id=' . $results->id . ' type="button" id="' . 'lockUserID-' . $results->id . '" ><i class="fa fa-lock"></i></button>';
                         return $btn;
                     }
                 )

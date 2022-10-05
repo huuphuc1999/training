@@ -1,7 +1,7 @@
 <?php
 /**
  * Home controller
- * 
+ *
  * PHP version 7
  *
  * @category  Controllers
@@ -14,9 +14,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 /**
  * Handle backend requests
- * 
+ *
  * @category  Controllers
  * @package   App
  * @author    Phuc <phan.phuc.rcvn2012@gmail.com>
@@ -44,5 +45,14 @@ class HomeController extends Controller
     public function index()
     {
         return view('backend.dashboard');
+    }
+    /**
+     * Redirect route .
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function redirectRoute()
+    {
+        return Redirect()->route('login');
     }
 }

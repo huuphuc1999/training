@@ -12,19 +12,9 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Route::get(
-    '/',
-    function () {
-        return Redirect()->route('login');
-    }
-);
+Route::get('/', 'HomeController@redirectRoute');
 
-Route::get(
-    'logout', '\App\Http\Controllers\Auth\LoginController@logout',
-    function () {
-        session()->forget();
-    }
-)->name('logout');
+Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout')->name('logout');
 // Backend section start
 
 Route::group(
@@ -33,13 +23,19 @@ Route::group(
         Route::get('/', 'AdminController@index')->name('admin');
         // User route
         Route::resource('users', 'UserController');
-        Route::post('users/status/{id}', 'UserController@userLockOrUnlock')->name('users.status');
+        Route::post('users/status/{id}', 'UserController@userLockOrUnlock')->name('users.status'); //phpcs:ignore
         // Product route
         Route::get('products', 'ProductController@index')->name('products.index');
-        Route::get('products/details/{product}', 'ProductController@show')->name('products.show');
+        Route::get('products/details/{product}', 'ProductController@show')->name('products.show'); //phpcs:ignore
         Route::post('products', 'ProductController@store')->name('products.store');
-        Route::post('products/update/{product}', 'ProductController@update')->name('products.update');
-        Route::delete('products/delete/{product}', 'ProductController@destroy')->name('products.destroy');
+        Route::post('products/update/{product}', 'ProductController@update')->name('products.update'); //phpcs:ignore
+        Route::delete('products/delete/{product}', 'ProductController@destroy')->name('products.destroy'); //phpcs:ignore
+        // Customer route
+        Route::get('customers', 'CustomerController@index')->name('customers.index');
+        Route::get('customers/details/{customers}', 'CustomerController@show')->name('customers.show'); //phpcs:ignore
+        Route::post('customers', 'CustomerController@store')->name('customers.store'); //phpcs:ignore
+        Route::post('customers/update/{customers}', 'CustomerController@update')->name('customers.update'); //phpcs:ignore
+        Route::delete('customers/delete/{customers}', 'CustomerController@destroy')->name('customers.destroy'); //phpcs:ignore
 
     }
 );

@@ -21,6 +21,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use session;
 
 /**
  * Handle user authentication
@@ -98,10 +99,25 @@ class LoginController extends Controller
                 $this->user
                     ->where('email', $request->email)
                     ->update(['last_login_at' => $this->now, 'last_login_ip' => \Request::ip()]);
-                return redirect()->intended(route('admin'));
+                return redirect()->intended(route('users.index'));
             }
             // if unsuccessful -> redirect back
             return redirect()->back()->withInput($request->only('email', 'remember'))->withErrors(['password' => 'Mật khẩu không chính xác.']);
         }
+    }
+    /**
+     * Handle user logout.
+     *
+     * @param \Illuminate\Http\Request $request submitted by users
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function logout(Request $request)
+    {
+        session()->forget('inforUser');
+
+        Auth::logout();
+
+        return redirect()->route('login');
     }
 }

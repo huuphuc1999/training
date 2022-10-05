@@ -27,13 +27,7 @@ use Yajra\Datatables\Datatables;
  */
 class ProductRepository extends EloquentRepository
 {
-    /**
-     * EloquentRepository constructor.
-     */
-    // public function __construct()
-    // {
-    //     $this->now = Carbon::now('Asia/Ho_Chi_Minh');
-    // }
+
     /**
      * Get model
      *

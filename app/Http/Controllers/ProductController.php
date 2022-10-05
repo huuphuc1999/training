@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ProductController extends Controller
 {
     /**
-     * Inject user Repository to construct
+     * Inject product Repository to construct
      */
     protected $productRepository;
     /**
@@ -46,7 +46,7 @@ class ProductController extends Controller
         $this->productRepository = $productRepository;
     }
     /**
-     * Show all users that are not deleted .
+     * Show all product .
      *
      * @param \Illuminate\Http\Request $request submitted by users
      *

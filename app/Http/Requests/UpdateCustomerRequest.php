@@ -1,6 +1,6 @@
 <?php
 /**
- * Use for validator request
+ * Customer for validator request
  *
  * PHP version 7
  *
@@ -25,7 +25,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @license   https://opensource.org/licenses/MIT MIT License
  * @link      http://localhost/
  */
-class AddUserRequest extends FormRequest
+class UpdateCustomerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -44,12 +44,12 @@ class AddUserRequest extends FormRequest
      */
     public function rules()
     {
+        $id = $this->request->get('customer_id') ? ',' . $this->request->get('customer_id') : '';
         return [
-            'name' => 'required|min:5',
-            'email' => 'required|max:255|email:rfc,dns|unique:users',
-            'password' => 'required|min:5|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
-            'password_confirmation' => 'required|min:5|same:password',
-            'group_role' => 'required',
+            'customer_name' => 'required|min:5',
+            'email' => 'required|max:255|email:rfc,dns|unique:customers,email' . $id . ',customer_id',
+            'tel_num' => 'required|regex:/^([0-9]*)$/|min:7|max:13',
+            'address' => 'required|max:255',
         ];
     }
     /**
@@ -61,10 +61,8 @@ class AddUserRequest extends FormRequest
     {
         return [
 
-            "name.required" => "Vui lòng nhập tên người sử dụng",
-            "name.min" => "Tên phải lớn hơn 5 ký tự",
-
-            "group_role.required" => "Vui lòng chọn nhóm",
+            "customer_name.required" => "Vui lòng nhập tên khách hàng",
+            "customer_name.min" => "Tên phải lớn hơn 5 ký tự",
 
             "email.required" => "Email không được để trống",
             "email.email" => "Email không đúng định dạng",
@@ -72,13 +70,13 @@ class AddUserRequest extends FormRequest
             "email.unique" => "Email đã được đăng ký",
             "email.max" => "Email quá dài",
 
-            "password.required" => "Mật khẩu không được để trống",
-            "password.min" => "Mật khẩu phải lớn hơn 5 ký tự",
-            "password.regex" => "Mật khẩu không bảo mật",
+            "tel_num.required" => "Điện thoại không được để trống",
+            "tel_num.regex" => "Điện thoại không đúng định dạng",
+            "tel_num.min" => "Điện thoại không đúng định dạng",
+            "tel_num.max" => "Điện thoại không đúng định dạng",
 
-            "password_confirmation.required" => "Xác nhận mật khẩu",
-            "password_confirmation.min" => "Mật khẩu phải lớn hơn 5 ký tự",
-            "password_confirmation.same" => "Mật khẩu và xác nhận mật khẩu không chính xác",
+            "address.required" => "Địa chỉ không được để trống",
+            "address.max" => "Địa chỉ quá dài",
 
         ];
     }

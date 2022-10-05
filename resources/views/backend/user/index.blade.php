@@ -11,14 +11,13 @@
           <li role="presentation" class="active"><a style="cursor: pointer;" href="#tab_content1" id="product-tab"
               role="tab" data-toggle="tab" aria-expanded="true">Sản phẩm</a>
           </li>
-          <li role="presentation" class=""><a style="cursor: pointer;" href="#tab_content2" role="tab" id="profile-tab"
+          <li role="presentation" class=""><a style="cursor: pointer;" href="#tab_content2" role="tab" id="customer-tab"
               data-toggle="tab" aria-expanded="false">Khách hàng</a>
           </li>
           <li role="presentation" class=""><a style="cursor: pointer;" href="#tab_content3" role="tab" id="user-tab"
               data-toggle="tab" aria-expanded="false">Users</a>
           </li>
         </ul>
-
         <div id="myTabContent" class="tab-content">
           <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
             <div class="x_title">
@@ -29,7 +28,6 @@
                     <input class="form-control col-md-3 col-xs-12" id="productName" type="text" name="productName"
                       placeholder="Nhập họ tên">
                   </div>
-
                   <div style="float:left;margin-right:20px;">
                     <label for="middle-name">Tình trạng</label>
                     <select class="form-control col-md-3 col-xs-12" id="productStatus" name="productStatus">
@@ -187,9 +185,146 @@
 
           </div>
           <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
+            <div class="x_title">
+              <div style="display: flex;justify-content: center;">
+                <form id="searchCustomerForm" action="">
+                  <div style="float:left;margin-right:20px;">
+                    <label for="middle-name">Họ và Tên</label>
+                    <input class="form-control col-md-3 col-xs-12" id="customerSearchName" type="text"
+                      name="customerSearchName" placeholder="Nhập họ tên">
+                  </div>
+                  <div style="float:left;margin-right:20px;">
+                    <label for="middle-name">Email</label>
+                    <input class="form-control col-md-3 col-xs-12" id="customerSearchEmail" type="text"
+                      placeholder="Nhập email" name="customerSearchEmail">
+                  </div>
 
+                  <div style="float:left;margin-right:20px;">
+                    <label for="middle-name">Trạng thái</label>
+                    <select class="form-control col-md-3 col-xs-12" id="customerSearchStatus"
+                      name="customerSearchStatus">
+                      <option selected disabled>Chọn trạng thái</option>
+                      <option value="1">Đang hoạt động</option>
+                      <option value="0">Tạm khóa</option>
+                    </select>
+                  </div>
+                  <div style="float:left;margin-right:20px;">
+                    <label for="middle-name">Địa chỉ</label>
+                    <input class="form-control col-md-3 col-xs-12" id="customerSearchAddress" type="text"
+                      name="customerSearchAddress" placeholder="Nhập địa chỉ">
+                  </div>
+                </form>
+              </div>
+              <div class="clearfix"></div>
 
+            </div>
+            <div class=" x_content">
+              <button id="addCustomerBtn" style="margin-right: 20px" type="button" class="btn btn-primary"
+                data-toggle="modal" data-target=".popupCustomer"><i class="fa fa-user"></i> &nbsp;Thêm mới</button>
+              <button id="importCSV" style="margin-right: 20px" type="button" class="btn btn-info "><i
+                  class="fa fa-upload"></i> &nbsp;Import
+                CSV</button>
+              <button id="exportCSV" type="button" class="btn btn-success"><i class="fa fa-download"></i> &nbsp;Export
+                CSV</button>
+              <div style="margin-top: 5px;
+                float: right;
+                display: block;">
+                <button type="button" id="searchCustomer" class="btn btn-primary">
+                  <i class="fa fa-edit"></i>
+                  Tìm kiếm
+                </button>
+                <button id="refreshCustomerPage" class="btn btn-info"><i class="fa fa-edit"></i>Xóa tìm</button>
+              </div>
+              <table class="table table-striped projects" id="customers-table">
+                <thead>
+                  <tr>
+                    <th style="width: 1%">#</th>
+                    <th style="width: 20%!important">Họ tên</th>
+                    <th style="width: 20%!important">Email</th>
+                    <th style="width: 20%!important">Địa chỉ</th>
+                    <th style="width: 20%!important">Điện thoại</th>
+                    <th style="width: 19%!important"></th>
+                  </tr>
+                </thead>
+                <tbody>
 
+                </tbody>
+              </table>
+              <!-- end end list -->
+              <div class="x_content">
+
+                <!-- modals -->
+                <!-- Small modal -->
+
+                <div class="modal fade bs-example-modal-sm popupCustomer" tabindex="-1" role="dialog" aria-hidden="true"
+                  style="display: none;">
+                  <div class="modal-dialog modal-sm">
+                    <div style="width: 550px;" class="modal-content">
+
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="popupCustomerTitle">Thêm khách hàng</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <div>
+                          <form id="addCustomerForm" class="form-horizontal">
+                            <div class="form-group">
+                              <label for="inputEmail3" class="col-sm-2 control-label">Tên</label>
+                              <div style="width: 75%;" class="col-sm-10">
+                                <input type="text" class="form-control " name="customer_name" id="addCustomerName"
+                                  placeholder="Nhập họ tên">
+                                <span id="customer_name-errors" class="error text-danger d-none"></span>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+                              <div style="width: 75%;" class="col-sm-10">
+                                <input type="email" class="form-control " name="email" id="addCustomerEmail"
+                                  placeholder="Nhập email">
+                                <span id="email-errors" class="error text-danger d-none"></span>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label for="inputPassword3" class="col-sm-2 control-label">Điện thoai</label>
+                              <div style="width: 75%;" class="col-sm-10">
+                                <input type="number" class="form-control " name="tel_num" id="addCustomerPhone"
+                                  placeholder="Điện thoại">
+                                <span id="tel_num-errors" class="error text-danger d-none"></span>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label for="inputPassword3" class="col-sm-2 control-label">Địa chỉ</label>
+                              <div style="width: 75%;" class="col-sm-10">
+                                <input type="text" class="form-control " name="address" id="addCustomerAddress"
+                                  placeholder="Địa chỉ">
+                                <span id="address-errors" class="error text-danger d-none"></span>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-sm-2 control-label">Trạng thái</label>
+                              <div style="width: 75%;" class="col-sm-10">
+                                <input type="checkbox" class="form-control" id="addCustomerStatus" data-toggle="toggle"
+                                  checked data-on="Hoạt động" data-off="Tạm khóa" data-onstyle="success"
+                                  data-offstyle="danger">
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" id="closePopupCustomerButton" class="btn btn-secondary"
+                                data-dismiss="modal">Hủy</button>
+                              <button id="addCustomerButton" type="button" class="btn btn-danger">Lưu</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+                <!-- /modals -->
+              </div>
+            </div>
           </div>
           <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="profile-tab">
             <div class="x_title">
@@ -1290,8 +1425,7 @@
       }
     })
   });
-  
-});
+  });
 </script>
 <script>
   var $fileInput = $('.file-input');
@@ -1360,5 +1494,310 @@
         $("#product_image-err").empty();
       });
   });
+</script>
+<script>
+  $(document).on('click', '#customer-tab',function(){
+     /**
+     * Setup header for ajax
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Json}
+     */
+     $.ajaxSetup({
+        headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+    });
+    var idCustomer = null;
+    var dataSearch = {load: 'index'};
+    var customerStatus = "1";
+    getCustomerData();
+    /**
+     * Create events for close popup
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Json}
+     */
+    $('#closePopupCustomerButton').on('click', function (e) {
+      $('#editCustomerButton').attr('id','addCustomerButton');
+        dataSearch = {load: 'index'};
+        getCustomerData();
+    });
+    /**
+     * Reset form before display
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Json}
+     */
+    function clearCustomerErrorsMessage(){
+      $("#customer_name-errors").empty();
+      $("#email-errors").empty();
+      $("#tel_num-errors").empty();
+      $("#address-errors").empty();
+      
+    }
+    function resetForm(){
+          $('#addCustomerForm').trigger("reset");
+          $('#addCustomerStatus').bootstrapToggle('on');
+        }
+    $('#addCustomerBtn').on('click',function(){
+      clearCustomerErrorsMessage();
+      resetForm();
+    });
+    /**
+     * Create events for delete searched items
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Json}
+     */
+    $('#refreshCustomerPage').on('click', function (e) {
+      $('#customerStatus').prop('selectedIndex', -1);
+      $(':input').val('');
+      dataSearch = {load: 'index'};
+      getCustomerData();
+    });
+    /**
+     * Create events for data searching
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Json}
+     */
+    $('#searchCustomer').on('click', function (e) {
+      var name = $("#customerSearchName").val();
+      var email = $("#customerSearchEmail").val();
+      var address = $("#customerSearchAddress").val();
+      var status = $('#customerSearchStatus').val();
+        if( (name == '') && (status == null) && (email == '') && (address == '')){
+          Swal.fire(
+          'Do you forget somethings?',
+          'Vui lòng nhập ít nhất một thông tin để tìm kiếm!',
+          'warning'
+        )
+        }else{
+          dataSearch = {
+            name:name, 
+            email:email, 
+            address:address,
+            status:status,
+            load:'search'
+          };
+          getCustomerData();
+        }
+    }) 
+    /**
+     * Get data from server and display 
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Json}
+     */
+    function getCustomerData(){
+      var $data_table = $( '#customers-table');
+      $('#customers-table').DataTable({
+      drawCallback:function(){
+        var page_min = 1;
+        var $api = this.api();
+        var pages = $api.page.info().pages;
+        var rows = $api.data().length;
+
+        // Tailor the settings based on the row count
+        if(rows <= page_min){
+            // Not enough rows for really any features, hide filter/pagination/length
+            $data_table
+                .next('.dataTables_info').css('display','none')
+                .next('.dataTables_paginate').css('display','none');
+
+            $data_table
+                .prev('.dataTables_filter').css('display', 'none')
+                .prev('.dataTables_length').css('display', 'none')
+        } else if(pages === 1){
+            // With this current length setting, not more than 1 page, hide pagination
+            $data_table
+                .next('.dataTables_info').css('display','none')
+                .next('.dataTables_paginate').css('display','none');
+        } else {
+            // SHow everything
+            $data_table
+                .next('.dataTables_info').css('display','block')
+                .next('.dataTables_paginate').css('display','block');
+        }
+      },
+      language: {
+        processing: "Đang tải dữ liệu, chờ tí",
+        lengthMenu: "Đang hiển thị 1 ~ _MENU_ ",
+        info: "Hiển thị từ _START_ ~ _END_ trong tổng số _TOTAL_ user",
+        infoEmpty: "Không có dữ liệu",
+        emptyTable: "Không có dữ liệu",
+        paginate: {
+            first: "Trang đầu",
+            previous: "Trang trước",
+            next: "Trang sau",
+            last: "Trang cuối"
+        },
+      },
+      lengthMenu: [20, 50, 100, 200, 500],
+      searching: false,
+      "ordering": false,
+      "bDestroy": true,
+      processing: true,
+      serverSide: true,
+      ajax: {
+          url : '{!! route('customers.index') !!}',
+          type : "GET",
+          data: dataSearch,
+      },
+      columns: [
+          { data: 'customer_id', name: 'customer_id' },
+          { data: 'customer_name', name: 'customer_name' },
+          { data: 'email', name: 'email' },
+          { data: 'address', name: 'address' },
+          { data: 'tel_num', name: 'tel_num' },
+          { data: 'action', name: 'action', orderable: false, searchable: false},
+      ],
+    }); 
+  }  
+
+      $('#addCustomerStatus').change(function(){
+        if (document.getElementById('addCustomerStatus').checked)
+        customerStatus = '1';
+        else
+        customerStatus = '0';
+      });
+      /**
+     * Save data to database
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Response}
+     */
+        
+        $('body').on('click', '#addCustomerButton', function (e) {
+          e.preventDefault();
+          var form = $('#addCustomerForm')[0];
+          var formData = new FormData(form);
+          formData.append('is_active', customerStatus);
+          $.ajax({
+            url: "{{route('customers.store')}}",
+            type: "POST",
+            data: formData,
+            contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+            processData: false, // NEEDED, DON'T OMIT THIS
+            dataType: 'json',
+            success: function (data) {
+              $('#addCustomerForm').trigger("reset");
+              const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              }
+            })
+            Toast.fire({
+              icon: 'success',
+              title: 'Thêm khách hàng mới thành công'
+            })
+            },
+            beforeSend: function(){
+              clearCustomerErrorsMessage();
+            },
+            error: function (err) {
+              $.each(err.responseJSON.errors, function (key, value) {
+                $("#" + key + '-errors').html(value[0]);
+                $("#" + key + '-errors').next().removeClass('d-none');
+              });
+            }
+        });
+    });
+    /**
+     * Append customers info to input field
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Response}
+     */
+     $(document).on('click','.popupEditCustomer', function(){
+      $('#popupCustomerTitle').html('Chỉnh sửa khách hàng')
+      var id = $(this).data("id");
+      $.ajax({
+            url: `{{ url('/admin/customers/details/'.'${id}') }}`,
+            type: "GET",
+            data: {
+              id: id,
+            },
+            dataType: 'json',
+            success: function (data) {
+              idCustomer = data.data.customer_id;
+              $('#addCustomerButton').attr('id','editCustomerButton');
+              $("#addCustomerName").val(data.data.customer_name);
+              $("#addCustomerEmail").val(data.data.email);
+              $("#addCustomerAddress").val(data.data.address);
+              $("#addCustomerPhone").val(data.data.tel_num);
+              data.data.is_active === 1 ? $('#addCustomerStatus').bootstrapToggle('on') : $('#addCustomerStatus').bootstrapToggle('off');
+            },
+            error: function (err) {
+              alert('Somethings went wrong!');
+            },
+        });
+    })
+    /**
+     * Update customer data to database
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Response}
+     */
+        $('body').on('click', '#editCustomerButton', function (e) {
+          e.preventDefault();
+          clearCustomerErrorsMessage();
+          var form = $('#addCustomerForm')[0];
+          var formData = new FormData(form);
+          formData.append('is_active', customerStatus);
+          formData.append('customer_id', idCustomer);
+          $.ajax({
+            url: `{{ url('/admin/customers/update/'.'${idCustomer}') }}`,
+            type: "post",
+            contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+            processData: false, // NEEDED, DON'T OMIT THIS
+            data: formData,
+            dataType: 'json',
+            success: function (data) {
+              $("#closePopupCustomerButton").trigger("click");
+              const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              }
+            })
+            Toast.fire({
+              icon: 'success',
+              title: 'Chỉnh sửa khách hàng thành công'
+            })
+            },
+            beforeSend: function(){
+             clearCustomerErrorsMessage();
+            },
+            error: function (err) {
+              $.each(err.responseJSON.errors, function (key, value) {
+                $("#" + key + '-errors').html(value[0]);
+                $("#" + key + '-errors').next().removeClass('d-none');
+              });
+            }
+        });
+    });
+});
 </script>
 @endpush
