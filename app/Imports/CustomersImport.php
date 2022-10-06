@@ -14,9 +14,12 @@
 namespace App\Imports;
 
 use App\Models\Customer;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
 /**
@@ -29,7 +32,7 @@ use Maatwebsite\Excel\Concerns\WithValidation;
  * @license   https://opensource.org/licenses/MIT MIT License
  * @link      http://localhost/
  */
-class CustomersImport implements ToModel, WithValidation, WithHeadingRow
+class CustomersImport implements ToModel, WithValidation, WithStartRow, WithBatchInserts, WithChunkReading, ShouldQueue
 {
     use Importable;
     /**
@@ -50,14 +53,22 @@ class CustomersImport implements ToModel, WithValidation, WithHeadingRow
             ]
         );
     }
+    public function batchSize(): int
+    {
+        return 1000;
+    }
+    public function chunkSize(): int
+    {
+        return 1000;
+    }
     /**
      * Ignore heading row
      *
-     * @return void
+     * @return int
      */
-    public function headingRow(): int
+    public function startRow(): int
     {
-        return 1;
+        return 2;
     }
     /**
      * Validate row input
@@ -68,10 +79,20 @@ class CustomersImport implements ToModel, WithValidation, WithHeadingRow
     {
         return [
             '0' => 'required|min:5',
-            '1' => 'required|max:255|email:rfc,dns|unique:customers',
+            '1' => 'required|max:255|email:rfc,dns|unique:customers,email',
             '2' => 'required|regex:/^([0-9]*)$/|min:7|max:13',
             '3' => 'required|max:255',
         ];
+    }
+    /**
+     * @return array
+     */
+    public function customValidationAttributes()
+    {
+        return ['0' => 'customer_name'];
+        return ['1' => 'email'];
+        return ['2' => 'tel_num'];
+        return ['3' => 'address'];
     }
     /**
      * Custom message

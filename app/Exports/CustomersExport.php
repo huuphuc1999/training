@@ -15,6 +15,7 @@ namespace App\Exports;
 
 use App\Models\Customer;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
@@ -28,7 +29,7 @@ use Maatwebsite\Excel\Concerns\WithMapping;
  * @license   https://opensource.org/licenses/MIT MIT License
  * @link      http://localhost/
  */
-class CustomersExport implements FromCollection, WithHeadings, WithMapping
+class CustomersExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize
 {
     /**
      * Inject request to construct
@@ -50,25 +51,21 @@ class CustomersExport implements FromCollection, WithHeadings, WithMapping
         if ($this->request->load == 'index') {
             $results = $querySearch
                 ->orderBy('customer_id', 'DESC')
-                ->limit(20)
+                ->take($this->request->numRows)
                 ->get();
         }
         if ($this->request->load == 'search') {
             if ($this->request->filled('status')) {
-                $querySearch
-                    ->where('is_active', $this->request->status);
+                $querySearch->where('is_active', $this->request->status);
             }
             if ($this->request->name) {
-                $querySearch
-                    ->where('customer_name', 'like', '%' . $this->request->name . '%');
+                $querySearch->where('customer_name', 'like', '%' . $this->request->name . '%');
             }
             if ($this->request->email) {
-                $querySearch
-                    ->where('email', 'like', '%' . $this->request->email . '%');
+                $querySearch->where('email', 'like', '%' . $this->request->email . '%');
             }
             if ($this->request->address) {
-                $querySearch
-                    ->where('address', 'like', '%' . $this->request->address . '%');
+                $querySearch->where('address', 'like', '%' . $this->request->address . '%');
             }
             $results = $querySearch->get();
         }
@@ -104,4 +101,5 @@ class CustomersExport implements FromCollection, WithHeadings, WithMapping
             $customer->address,
         ];
     }
+
 }

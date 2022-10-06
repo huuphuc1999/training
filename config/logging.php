@@ -15,7 +15,7 @@ return [
     | messages to the logs. The name specified in this option should match
     | one of the channels defined in the "channels" configuration array.
     |
-    */
+     */
 
     'default' => env('LOG_CHANNEL', 'stack'),
 
@@ -32,7 +32,7 @@ return [
     |                    "errorlog", "monolog",
     |                    "custom", "stack"
     |
-    */
+     */
 
     'channels' => [
         'stack' => [
@@ -98,6 +98,14 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+
+        'import_excel' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/import_excel.log'),
+            'level' => 'debug',
+            'days' => 7,
+            'permission' => 0777,
         ],
     ],
 

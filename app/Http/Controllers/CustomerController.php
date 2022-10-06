@@ -19,6 +19,7 @@ use App\Http\Requests\UpdateCustomerRequest;
 use App\Imports\CustomersImport;
 use App\Repositories\CustomerRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 /**
@@ -61,7 +62,6 @@ class CustomerController extends Controller
             if ($request->ajax()) {
                 return $this->customerRepository->customerSearching($request);
             }
-            return view('backend.user.index');
         } catch (\Throwable $th) {
             return $this->errorsResponce($message = 'Somethings went wrong, try agian!'); //phpcs:ignore
         }
@@ -131,14 +131,23 @@ class CustomerController extends Controller
         return Excel::download(new CustomersExport($request), 'customers.xlsx');
     }
     /**
-     * Export customer resources
+     * Import customer resources
      *
      * @return void
      */
     public function import()
     {
-        Excel::import(new CustomersImport, request()->file('customersFile'));
-
-        return $this->successResponce($message = 'Import customers successfully');
+        try {
+            Excel::import(new CustomersImport, request()->file('customersFile'));
+            return $this->successResponce($message = 'Import customer successfully'); //phpcs:ignore
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            foreach ($failures as $failure) {
+                $row = $failure->row(); // row that went wrong
+                $message = $failure->errors(); // Actual error messages from Laravel validator
+                Log::channel('import_excel')->debug('Customer import failed at row ' . $row . ' | message => ' . $message[0]); //phpcs:ignore
+            }
+            return $this->errorsResponce($message = 'Customer import failed, see more at storage\logs'); //phpcs:ignore
+        }
     }
 }
