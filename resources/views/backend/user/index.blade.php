@@ -75,7 +75,6 @@
                     <th style="width: 10%!important">Giá</th>
                     <th style="width: 10%!important">Tình trạng</th>
                     <th style="width: 19%!important"></th>
-                    <th style="width: 19%!important"></th>
                   </tr>
                 </thead>
                 <tbody>
