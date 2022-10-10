@@ -166,11 +166,14 @@ $(document).ready(function () {
             },
             columns: [
                 { data: 'product_id', name: 'product_id' },
-                { data: 'product_name', name: 'product_name' },
+                { data: 'product_name', name: 'product_name', orderable: false, searchable: false },
                 { data: 'description', name: 'description' },
                 { data: 'product_price', name: 'product_price' },
                 { data: 'is_sales', name: 'is_sales' },
+
                 { data: 'action', name: 'action', orderable: false, searchable: false },
+                // { data: 'product_image', name: 'product_image', orderable: false, searchable: false },
+
             ],
         });
     }

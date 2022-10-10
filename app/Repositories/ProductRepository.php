@@ -142,6 +142,16 @@ class ProductRepository extends EloquentRepository
                         return $btn;
                     }
                 )
+                ->addColumn(
+                    'product_name',
+                    function ($results) {
+                        if (!empty($results->product_image)) {
+                            return '<a class="hoverDisplayImage">' . $results->product_name . ' <span><img loading="lazy" src="' . \URL::to('storage/' . $results->product_image) . '" width="40" height="40" /></span> </a>';
+                        } else {
+                            return '<a class="hoverDisplayImage">' . $results->product_name . '</a>';
+                        }
+                    }
+                )
                 ->editColumn(
                     'product_price',
                     function ($results) {
@@ -155,7 +165,7 @@ class ProductRepository extends EloquentRepository
                         return $status;
                     }
                 )
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'product_name'])
                 ->make(true);
         }
     }
