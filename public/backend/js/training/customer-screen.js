@@ -222,7 +222,7 @@ $(document).on('click', '#customer-tab', function () {
    * @returns {Response}
    */
 
-    $('body').unbind().on('click', '#addCustomerButton', function (e) {
+    $(document).on('click', '#addCustomerButton', function (e) {
         e.preventDefault();
         var form = $('#addCustomerForm')[0];
         var formData = new FormData(form);

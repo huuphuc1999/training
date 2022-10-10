@@ -1,4 +1,10 @@
+/**
+* Because some error occurs when in autoload mode, this method must be used
+*/
 $(document).ready(function () {
+    $('#product-tab').trigger('click');
+});
+$(document).on('click', '#product-tab', function () {
     /**
     * Setup header for ajax
     * 
