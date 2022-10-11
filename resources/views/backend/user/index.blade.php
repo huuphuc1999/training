@@ -93,9 +93,7 @@
 
                       <div class="modal-header">
                         <h4 class="modal-title" id="popupProductTitle">Thêm sản phẩm</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">×</span>
-                        </button>
+
                       </div>
                       <div class="modal-body">
                         <div>
@@ -274,9 +272,7 @@
 
                       <div class="modal-header">
                         <h4 class="modal-title" id="popupCustomerTitle">Thêm khách hàng</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">×</span>
-                        </button>
+
                       </div>
                       <div class="modal-body">
                         <div>
@@ -413,9 +409,7 @@
 
                       <div class="modal-header">
                         <h4 class="modal-title" id="popupUserTitle">Thêm User</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">×</span>
-                        </button>
+
                       </div>
                       <div class="modal-body">
                         <div>

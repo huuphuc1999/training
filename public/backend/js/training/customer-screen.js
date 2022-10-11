@@ -124,13 +124,31 @@ $(document).on('click', '#customer-tab', function () {
             confirmButtonText: 'Có, Xuất file '
         }).then((result) => {
             if (result.isConfirmed) {
-                var url = base_url + "'/admin/customers/export'" + $.param(dataSearch);
-                window.location = url;
-                Swal.fire(
-                    'Thành công!',
-                    'Xuất file excel thành công',
-                    'success'
-                )
+                $.ajax({
+                    url: base_url + '/admin/customers/export/',
+                    type: "GET",
+                    data: dataSearch,
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                    cache: false,
+                    success: function (data) {
+                        var url = window.URL || window.webkitURL;
+                        var objectUrl = url.createObjectURL(data);
+                        var fileLink = document.createElement('a');
+                        fileLink.href = objectUrl;
+                        fileLink.download = 'customer.xlsx';
+                        fileLink.click();
+                        Swal.fire(
+                            'Thành công!',
+                            'Xuất file excel thành công',
+                            'success'
+                        )
+                    },
+                    error: function (err) {
+                        alert('Somethings went wrong!');
+                    },
+                });
             }
         })
 
@@ -271,6 +289,7 @@ $(document).on('click', '#customer-tab', function () {
      * @returns {Response}
      */
     $(document).on('click', '.popupEditCustomer', function () {
+        clearCustomerErrorsMessage();
         $('#popupCustomerTitle').html('Chỉnh sửa khách hàng')
         var id = $(this).data("id");
         $.ajax({

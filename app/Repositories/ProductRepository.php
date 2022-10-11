@@ -72,7 +72,7 @@ class ProductRepository extends EloquentRepository
 
         $data['product_id'] = $request->product_name[0] . floor(time() - 999999999);
         if ($request->product_image) {
-            $filename = $request->product_image->getClientOriginalName();
+            $filename = date_format(\Carbon\Carbon::now('Asia/Ho_Chi_Minh'), "YmdHis") . '_' . $request->product_image->getClientOriginalName();
             $path = $request->file('product_image')->storeAs('public/backend/images/products', $filename);
             $data['product_image'] = 'backend/images/products/' . $filename;
         }
@@ -88,13 +88,14 @@ class ProductRepository extends EloquentRepository
      */
     public function updateProduct($id, $request)
     {
+        $oldImage = $this->model->find($id)->pluck('product_image')->first();
         $data = $request->all();
         if ($request->product_image) {
-            $filename = $request->product_image->getClientOriginalName();
+            $filename = date_format(\Carbon\Carbon::now('Asia/Ho_Chi_Minh'), "YmdHis") . '_' . $request->product_image->getClientOriginalName();
             $path = $request->file('product_image')->storeAs('public/backend/images/products', $filename);
             $data['product_image'] = 'backend/images/products/' . $filename;
+            \Storage::disk('public')->delete($oldImage);
         }
-
         return $this->model::where('product_id', $id)->update($data);
     }
     /**
@@ -119,9 +120,6 @@ class ProductRepository extends EloquentRepository
                 }
                 if ($request->productName) {
                     $querySearch->where('product_name', 'like', '%' . $request->productName . '%');
-                }
-                if ($request->productPriceFrom && $request->productPriceTo) {
-                    $querySearch->whereBetween('product_price', [$request->productPriceFrom, $request->productPriceTo])->orderBy('product_price');
                 }
                 if ($request->productPriceFrom) {
                     $querySearch->where('product_price', '>=', $request->productPriceFrom)->orderBy('product_price');

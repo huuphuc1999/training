@@ -241,6 +241,7 @@ $(document).on('click', '#user-tab', function () {
      * @returns {Response}
      */
     $(document).on('click', '.popupEditUser', function () {
+        clearErrorsMessage();
         $('#popupUserTitle').html('Chỉnh sửa User')
         var idUSer = $(this).data("id");
         $.ajax({
