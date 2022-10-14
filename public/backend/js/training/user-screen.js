@@ -1,3 +1,60 @@
+$().ready(function () {
+    // validate signup form on keyup and submit
+    $("#addUserForm").validate({
+        onkeyup: function (element) {
+            this.element(element);
+        },
+        onfocusout: function (element) {
+            this.element(element);
+        },
+        rules: {
+            addUserName: {
+                required: true,
+                minlength: 5
+            },
+            addUserPassword: {
+                required: true,
+                minlength: 5,
+                pwcheck: true
+            },
+            addUserPasswordConfirm: {
+                required: true,
+                equalTo: "#addUserPassword"
+            },
+            email: {
+                required: true,
+                email: true
+            },
+
+        },
+        messages: {
+            addUserName: {
+                required: "Vui lòng nhập tên user",
+                minlength: "Tên user phải lớn hơn 5 ký tự"
+            },
+            addUserPassword: {
+                required: "Vui lòng nhập mật khẩu",
+                minlength: "Mật khẩu phải lớn hơn 5 ký tự",
+                pwcheck: "Mật khẩu phải có cả chữ hoa, thường, số và kí tự đặt biệt",
+            },
+            addUserPasswordConfirm: {
+                required: "Vui lòng xác nhận mật khẩu",
+                equalTo: "Mật khẩu xác nhận không khớp"
+            },
+            addUserEmail: "Email chưa đúng định dạng",
+        },
+        submitHandler: function (form) { // for demo
+            alert('valid form');
+            return false;
+        }
+    });
+    $.validator.addMethod("pwcheck", function (value) {
+        return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/.test(value) // consists of only these
+            && /[a-z]/.test(value) // has a lowercase letter
+            && /\d/.test(value) // has a digit
+            && /[#?!@$%^&*-]/.test(value) // has special character
+    });
+});
 $(document).on('click', '#user-tab', function () {
     /**
     * Setup header for ajax
@@ -14,6 +71,7 @@ $(document).on('click', '#user-tab', function () {
     var userID = null;
     var base_url = window.location.origin;
     var dataSearch = { load: 'index' };
+    var validator = $("#addUserForm").validate();
     getUserData();
     /**
      * Create events for close popup
@@ -41,6 +99,8 @@ $(document).on('click', '#user-tab', function () {
         $("#password_confirmation-err").empty();
         $("#status-err").empty();
         $("#group_role-err").empty();
+        validator.resetForm();
+
     }
     $('#addUserBtn').on('click', function () {
         clearErrorsMessage();
@@ -469,4 +529,6 @@ $(document).on('click', '#user-tab', function () {
             })
         }
     });
+
+
 });

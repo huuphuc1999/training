@@ -3,6 +3,40 @@
 */
 $(document).ready(function () {
     $('#product-tab').trigger('click');
+    $("#addProductForm").validate({
+        onkeyup: function (element) {
+            this.element(element);
+        },
+        onfocusout: function (element) {
+            this.element(element);
+        },
+        rules: {
+            product_name: {
+                required: true,
+                minlength: 5
+            },
+            product_price: {
+                required: true,
+                digits: true,
+                min: 0,
+            },
+        },
+        messages: {
+            product_name: {
+                required: "Vui lòng nhập tên sản phẩm",
+                minlength: "Tên sản phẩm phải lớn hơn 5 ký tự"
+            },
+            product_price: {
+                required: "Vui lòng nhập giá tiền",
+                min: "Giá tiền phải lớn hơn 0",
+                digits: "Giá tiền phải là số",
+            },
+        },
+        submitHandler: function (form) { // for demo
+            alert('valid form');
+            return false;
+        }
+    });
 });
 $(document).on('click', '#product-tab', function () {
     /**
@@ -17,6 +51,7 @@ $(document).on('click', '#product-tab', function () {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
+    var validator = $("#addProductForm").validate();
     var base_url = window.location.origin;
     var idProduct = null;
     var defaultImage = $("#imgPreview").attr("src");
@@ -46,6 +81,7 @@ $(document).on('click', '#product-tab', function () {
         $("#product_name-err").empty();
         $("#product_price-err").empty();
         $("#product_image-err").empty();
+        validator.resetForm();
 
     }
     function resetForm() {

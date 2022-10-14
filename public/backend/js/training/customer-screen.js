@@ -1,3 +1,52 @@
+$().ready(function () {
+    // validate signup form on keyup and submit
+    $("#addCustomerForm").validate({
+        onkeyup: function (element) {
+            this.element(element);
+        },
+        onfocusout: function (element) {
+            this.element(element);
+        },
+        rules: {
+            customer_name: {
+                required: true,
+                minlength: 5
+            },
+            email: {
+                required: true,
+                email: true,
+            },
+            tel_num: {
+                required: true,
+                digits: true,
+            },
+            address: {
+                required: true,
+            },
+        },
+        messages: {
+            customer_name: {
+                required: "Vui lòng nhập tên khách hàng",
+                minlength: "Tên khách hàng phải lớn hơn 5 ký tự"
+            },
+            address: {
+                required: "Vui lòng nhập địa chỉ",
+            },
+            tel_num: {
+                required: "Vui lòng số điện thoại",
+                digits: "Số điện thoại sai định dạng",
+            },
+            email: {
+                email: "Email sai định dạng",
+                required: "Email không được bỏ trống",
+            },
+        },
+        submitHandler: function (form) { // for demo
+            alert('valid form');
+            return false;
+        }
+    });
+});
 $(document).on('click', '#customer-tab', function () {
     /**
     * Setup header for ajax
@@ -15,6 +64,7 @@ $(document).on('click', '#customer-tab', function () {
     var idCustomer = null;
     var dataSearch = { load: 'index' };
     var customerStatus = "1";
+    var validator = $("#addCustomerForm").validate();
     getCustomerData();
     /**
      * Create events for close popup
@@ -40,7 +90,7 @@ $(document).on('click', '#customer-tab', function () {
         $("#email-errors").empty();
         $("#tel_num-errors").empty();
         $("#address-errors").empty();
-
+        validator.resetForm();
     }
     function resetForm() {
         $('#addCustomerForm').trigger("reset");

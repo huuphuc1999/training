@@ -442,7 +442,7 @@
                             <div class="form-group">
                               <label for="inputPassword3" class="col-sm-2 control-label">Xác nhận</label>
                               <div style="width: 75%;" class="col-sm-10">
-                                <input type="password" class="form-control " name="addUserPassword"
+                                <input type="password" class="form-control " name="addUserPasswordConfirm"
                                   id="addUserPasswordConfirm" placeholder="Xác nhận mật khẩu">
                                 <span id="password_confirmation-err" class="error text-danger d-none"></span>
                               </div>
@@ -542,6 +542,12 @@
     }
   }
 
+  label.error {
+    display: inline-block;
+    color: red;
+    width: 200px;
+  }
+
   .fake-btn {
     flex-shrink: 0;
     background-color: rgb(18 189 162 / 4%);
@@ -617,6 +623,8 @@
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js">
+</script>
 <script src="{{asset('backend/js/training/user-screen.js')}}"></script>
 <script src="{{asset('backend/js/training/product-screen.js')}}"></script>
 <script src="{{asset('backend/js/training/customer-screen.js')}}"></script>
@@ -686,4 +694,5 @@
       });
   });
 </script>
+
 @endpush
