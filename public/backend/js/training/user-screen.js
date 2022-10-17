@@ -1,4 +1,21 @@
 $().ready(function () {
+    var base_url = window.location.origin;
+    var userStatus = "1";
+    $('#addUserStatus').change(function () {
+        if (document.getElementById('addUserStatus').checked)
+            userStatus = '1';
+        else
+            userStatus = '0';
+    });
+    function clearErrorsMessage() {
+        $("#name-err").empty();
+        $("#email-err").empty();
+        $("#password-err").empty();
+        $("#password_confirmation-err").empty();
+        $("#status-err").empty();
+        $("#group_role-err").empty();
+
+    }
     // validate signup form on keyup and submit
     $("#addUserForm").validate({
         onkeyup: function (element) {
@@ -21,9 +38,12 @@ $().ready(function () {
                 required: true,
                 equalTo: "#addUserPassword"
             },
-            email: {
+            addUserEmail: {
                 required: true,
                 email: true
+            },
+            addUserRole: {
+                required: true,
             },
 
         },
@@ -41,13 +61,77 @@ $().ready(function () {
                 required: "Vui lòng xác nhận mật khẩu",
                 equalTo: "Mật khẩu xác nhận không khớp"
             },
-            addUserEmail: "Email chưa đúng định dạng",
+            addUserRole: {
+                required: "Vui lòng chọn nhóm",
+            },
+            addUserEmail: {
+                required: "Vui lòng nhập Email",
+                email: "Email chưa đúng định dạng",
+            }
         },
-        submitHandler: function (form) { // for demo
-            alert('valid form');
+        submitHandler: function (form, event) { // for demo
+            // form.submit();
+            event.preventDefault();
+            /**
+             * Save data to database
+             * 
+             * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+             * 
+             * @returns {Response}
+             */
+            $('body').on('click', '#addUserButton', function (e) {
+                e.preventDefault();
+                var name = $("#addUserName").val();
+                var email = $("#addUserEmail").val();
+                var password = $("#addUserPassword").val();
+                var password_confirmation = $("#addUserPasswordConfirm").val();
+                var role = $("#addUserRole").val();
+                $.ajax({
+                    url: base_url + '/admin/users/',
+                    type: "POST",
+                    data: {
+                        name: name,
+                        email: email,
+                        password: password,
+                        password_confirmation: password_confirmation,
+                        group_role: role,
+                        is_active: userStatus,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#addUserForm').trigger("reset");
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Thêm mới user thành công'
+                        })
+                    },
+                    beforeSend: function () {
+                        clearErrorsMessage();
+                    },
+                    error: function (err) {
+                        $.each(err.responseJSON.errors, function (key, value) {
+                            $("#" + key + '-err').html(value[0]);
+                            $("#" + key + '-err').next().removeClass('d-none');
+                        });
+                    }
+                });
+            });
             return false;
         }
     });
+
+
     $.validator.addMethod("pwcheck", function (value) {
         return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/.test(value) // consists of only these
             && /[a-z]/.test(value) // has a lowercase letter
@@ -80,7 +164,7 @@ $(document).on('click', '#user-tab', function () {
      * 
      * @returns {Json}
      */
-    $('#closePopupUserButton').unbind().on('click', function (e) {
+    $('#closePopupUserButton').on('click', function (e) {
         $('#editUserButton').attr('id', 'addUserButton');
         dataSearch = { load: 'index' };
         getUserData();
@@ -113,7 +197,7 @@ $(document).on('click', '#user-tab', function () {
      * 
      * @returns {Json}
      */
-    $('#refreshPage').unbind().on('click', function (e) {
+    $('#refreshPage').on('click', function (e) {
         $('#status').prop('selectedIndex', -1);
         $('#role').prop('selectedIndex', -1);
         $(':input').val('');
@@ -127,7 +211,7 @@ $(document).on('click', '#user-tab', function () {
      * 
      * @returns {Json}
      */
-    $('#search').unbind().on('click', function (e) {
+    $('#search').on('click', function (e) {
         var name = $("#name").val();
         var email = $("#email").val();
         var role = $("#role").val();
@@ -150,6 +234,65 @@ $(document).on('click', '#user-tab', function () {
             getUserData();
         }
     })
+    /**
+     * Update user data to database
+     * 
+     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+     * 
+     * @returns {Response}
+     */
+    $('body').on('click', '#editUserButton', function (e) {
+        e.preventDefault();
+
+        clearErrorsMessage();
+        var name = $("#addUserName").val();
+        var email = $("#addUserEmail").val();
+        var password = $("#addUserPassword").val();
+        var password_confirmation = $("#addUserPasswordConfirm").val();
+        var role = $("#addUserRole").val();
+        $.ajax({
+            url: base_url + '/admin/users/' + userID,
+            type: "PUT",
+            data: {
+                id: userID,
+                name: name,
+                email: email,
+                password: password,
+                password_confirmation: password_confirmation,
+                group_role: role,
+                is_active: userStatus,
+                _method: 'PUT',
+            },
+            dataType: 'json',
+            success: function (data) {
+                $("#closePopupUserButton").trigger("click");
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                })
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Chỉnh sửa user thành công'
+                })
+            },
+            beforeSend: function () {
+                clearErrorsMessage();
+            },
+            error: function (err) {
+                $.each(err.responseJSON.errors, function (key, value) {
+                    $("#" + key + '-err').html(value[0]);
+                    $("#" + key + '-err').next().removeClass('d-none');
+                });
+            }
+        });
+    });
     /**
      * Get data from server and display 
      * 
@@ -238,61 +381,7 @@ $(document).on('click', '#user-tab', function () {
         else
             userStatus = '0';
     });
-    /**
-   * Save data to database
-   * 
-   * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
-   * 
-   * @returns {Response}
-   */
-    $('body').on('click', '#addUserButton', function (e) {
-        e.preventDefault();
-        var name = $("#addUserName").val();
-        var email = $("#addUserEmail").val();
-        var password = $("#addUserPassword").val();
-        var password_confirmation = $("#addUserPasswordConfirm").val();
-        var role = $("#addUserRole").val();
-        $.ajax({
-            url: base_url + '/admin/users/',
-            type: "POST",
-            data: {
-                name: name,
-                email: email,
-                password: password,
-                password_confirmation: password_confirmation,
-                group_role: role,
-                is_active: userStatus,
-            },
-            dataType: 'json',
-            success: function (data) {
-                $('#addUserForm').trigger("reset");
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                })
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Thêm mới user thành công'
-                })
-            },
-            beforeSend: function () {
-                clearErrorsMessage();
-            },
-            error: function (err) {
-                $.each(err.responseJSON.errors, function (key, value) {
-                    $("#" + key + '-err').html(value[0]);
-                    $("#" + key + '-err').next().removeClass('d-none');
-                });
-            }
-        });
-    });
+
     /**
      * Append user info to input field
      * 
@@ -324,64 +413,7 @@ $(document).on('click', '#user-tab', function () {
             },
         });
     })
-    /**
-     * Update user data to database
-     * 
-     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
-     * 
-     * @returns {Response}
-     */
-    $('body').on('click', '#editUserButton', function (e) {
-        e.preventDefault();
-        clearErrorsMessage();
-        var name = $("#addUserName").val();
-        var email = $("#addUserEmail").val();
-        var password = $("#addUserPassword").val();
-        var password_confirmation = $("#addUserPasswordConfirm").val();
-        var role = $("#addUserRole").val();
-        $.ajax({
-            url: base_url + '/admin/users/' + userID,
-            type: "PUT",
-            data: {
-                id: userID,
-                name: name,
-                email: email,
-                password: password,
-                password_confirmation: password_confirmation,
-                group_role: role,
-                is_active: userStatus,
-                _method: 'PUT',
-            },
-            dataType: 'json',
-            success: function (data) {
-                $("#closePopupUserButton").trigger("click");
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                })
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Chỉnh sửa user thành công'
-                })
-            },
-            beforeSend: function () {
-                clearErrorsMessage();
-            },
-            error: function (err) {
-                $.each(err.responseJSON.errors, function (key, value) {
-                    $("#" + key + '-err').html(value[0]);
-                    $("#" + key + '-err').next().removeClass('d-none');
-                });
-            }
-        });
-    });
+
     function getUserByID(id) {
         var user = null;
         $.ajax({

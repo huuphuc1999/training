@@ -1,8 +1,31 @@
 /**
 * Because some error occurs when in autoload mode, this method must be used
 */
-$(document).ready(function () {
-    $('#product-tab').trigger('click');
+
+$().ready(function () {
+
+    var base_url = window.location.origin;
+
+    /**
+         * Reset form before display
+         * 
+         * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+         * 
+         * @returns {Json}
+         */
+    var productStatus = "1";
+    function clearProductErrorsMessage() {
+        $("#product_name-err").empty();
+        $("#product_price-err").empty();
+        $("#product_image-err").empty();
+
+    }
+    $('#addProductStatus').change(function () {
+        if (document.getElementById('addProductStatus').checked)
+            productStatus = '1';
+        else
+            productStatus = '0';
+    });
     $("#addProductForm").validate({
         onkeyup: function (element) {
             this.element(element);
@@ -32,11 +55,64 @@ $(document).ready(function () {
                 digits: "Giá tiền phải là số",
             },
         },
-        submitHandler: function (form) { // for demo
-            alert('valid form');
+        submitHandler: function (form, event) { // for demo
+            event.preventDefault();
+            /**
+            * Save data to database
+            * 
+            * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+            * 
+            * @returns {Response}
+            */
+            $('body').on('click', '#addProductButton', function (e) {
+                e.preventDefault();
+                var form = $('#addProductForm')[0];
+                var formData = new FormData(form);
+                formData.append('is_sales', productStatus);
+                formData.append('product_image', $('#addProductImage')[0].files[0]);
+                $.ajax({
+                    url: base_url + '/admin/products/',
+                    type: "POST",
+                    data: formData,
+                    contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                    processData: false, // NEEDED, DON'T OMIT THIS
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#addProductForm').trigger("reset");
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Thêm sản phẩm mới thành công'
+                        })
+                    },
+                    beforeSend: function () {
+                        clearProductErrorsMessage();
+                    },
+                    error: function (err) {
+                        $.each(err.responseJSON.errors, function (key, value) {
+                            $("#" + key + '-err').html(value[0]);
+                            $("#" + key + '-err').next().removeClass('d-none');
+                        });
+                    }
+                });
+            });
             return false;
         }
     });
+});
+$().ready(function () {
+    $('#product-tab').trigger('click');
+
 });
 $(document).on('click', '#product-tab', function () {
     /**
@@ -224,56 +300,7 @@ $(document).on('click', '#product-tab', function () {
         else
             productStatus = '0';
     });
-    /**
-   * Save data to database
-   * 
-   * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
-   * 
-   * @returns {Response}
-   */
 
-    $('body').on('click', '#addProductButton', function (e) {
-        e.preventDefault();
-        var form = $('#addProductForm')[0];
-        var formData = new FormData(form);
-        formData.append('is_sales', productStatus);
-        formData.append('product_image', $('#addProductImage')[0].files[0]);
-        $.ajax({
-            url: base_url + '/admin/products/',
-            type: "POST",
-            data: formData,
-            contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
-            processData: false, // NEEDED, DON'T OMIT THIS
-            dataType: 'json',
-            success: function (data) {
-                $('#addProductForm').trigger("reset");
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                })
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Thêm sản phẩm mới thành công'
-                })
-            },
-            beforeSend: function () {
-                clearProductErrorsMessage();
-            },
-            error: function (err) {
-                $.each(err.responseJSON.errors, function (key, value) {
-                    $("#" + key + '-err').html(value[0]);
-                    $("#" + key + '-err').next().removeClass('d-none');
-                });
-            }
-        });
-    });
     /**
      * Append user info to input field
      * 

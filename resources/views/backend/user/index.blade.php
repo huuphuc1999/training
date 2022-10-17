@@ -97,8 +97,7 @@
                       </div>
                       <div class="modal-body">
                         <div>
-                          <form id="addProductForm" action="{{route('products.store')}}" method="POST"
-                            enctype="multipart/form-data" class="form-horizontal">
+                          <form id="addProductForm" enctype="multipart/form-data" class="form-horizontal">
                             <div class="form-group">
                               <label for="inputEmail3" class="col-sm-2 control-label">Tên sản phẩn</label>
                               <div style="width: 75%;" class="col-sm-10">
@@ -320,7 +319,7 @@
                             <div class="modal-footer">
                               <button type="button" id="closePopupCustomerButton" class="btn btn-secondary"
                                 data-dismiss="modal">Hủy</button>
-                              <button id="addCustomerButton" type="button" class="btn btn-danger">Lưu</button>
+                              <button id="addCustomerButton" type="submit" class="btn btn-danger">Lưu</button>
                             </div>
                           </form>
                         </div>

@@ -1,5 +1,14 @@
-$().ready(function () {
-    // validate signup form on keyup and submit
+$(document).ready(function () {
+    var base_url = window.location.origin;
+    var customerStatus = "1";
+    function clearCustomerErrorsMessage() {
+        $("#customer_name-errors").empty();
+        $("#email-errors").empty();
+        $("#tel_num-errors").empty();
+        $("#address-errors").empty();
+    }
+
+
     $("#addCustomerForm").validate({
         onkeyup: function (element) {
             this.element(element);
@@ -19,6 +28,7 @@ $().ready(function () {
             tel_num: {
                 required: true,
                 digits: true,
+                max: 9999999999999,
             },
             address: {
                 required: true,
@@ -35,17 +45,68 @@ $().ready(function () {
             tel_num: {
                 required: "Vui lòng số điện thoại",
                 digits: "Số điện thoại sai định dạng",
+                max: "Số điện thoại sai định dạng",
             },
             email: {
                 email: "Email sai định dạng",
                 required: "Email không được bỏ trống",
-            },
+            }
         },
-        submitHandler: function (form) { // for demo
-            alert('valid form');
+        submitHandler: function (event) { // for demo
+            // event.preventDefault();
+            /**
+            * Save data to database
+            * 
+            * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+            * 
+            * @returns {Response}
+            */
+            $('#addCustomerButton').on('click', function (e) {
+                e.preventDefault();
+                var form = $('#addCustomerForm')[0];
+                var formData = new FormData(form);
+                formData.append('is_active', customerStatus);
+                $.ajax({
+                    url: base_url + '/admin/customers/',
+                    type: "POST",
+                    data: formData,
+                    contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                    processData: false, // NEEDED, DON'T OMIT THIS
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#addCustomerForm').trigger("reset");
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Thêm khách hàng mới thành công'
+                        })
+                    },
+                    beforeSend: function () {
+                        clearCustomerErrorsMessage();
+                    },
+                    error: function (err) {
+                        $.each(err.responseJSON.errors, function (key, value) {
+                            $("#" + key + '-errors').html(value[0]);
+                            $("#" + key + '-errors').next().removeClass('d-none');
+                        });
+                    }
+                });
+            });
             return false;
         }
     });
+
+
 });
 $(document).on('click', '#customer-tab', function () {
     /**
@@ -75,8 +136,64 @@ $(document).on('click', '#customer-tab', function () {
      */
     $('#closePopupCustomerButton').unbind().on('click', function (e) {
         $('#editCustomerButton').attr('id', 'addCustomerButton');
+        $('#editCustomerForm').attr('id', 'addCustomerForm');
         dataSearch = { load: 'index' };
         getCustomerData();
+    });
+
+    // event.preventDefault();
+    /**
+    * Save data to database
+    * 
+    * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
+    * 
+    * @returns {Response}
+    */
+    $('body').on('click', '#editCustomerButton', function (e) {
+        e.preventDefault();
+        $("#editCustomerForm").valid();
+        clearCustomerErrorsMessage();
+        var form = $('#editCustomerForm')[0];
+        var formData = new FormData(form);
+        formData.append('is_active', customerStatus);
+        formData.append('customer_id', idCustomer);
+        $.ajax({
+            url: base_url + '/admin/customers/update/' + idCustomer,
+            type: "post",
+            contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+            processData: false, // NEEDED, DON'T OMIT THIS
+            data: formData,
+            dataType: 'json',
+            success: function (data) {
+                $("#closePopupCustomerButton").trigger("click");
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                })
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Chỉnh sửa khách hàng thành công'
+                })
+            },
+            beforeSend: function () {
+                clearCustomerErrorsMessage();
+            },
+            error: function (err) {
+                $.each(err.responseJSON.errors, function (key, value) {
+                    $("#" + key + '-errors').html(value[0]);
+                    $("#" + key + '-errors').next().removeClass('d-none');
+                });
+            }
+        });
+        // console.log('23');
+
     });
     /**
      * Reset form before display
@@ -97,6 +214,9 @@ $(document).on('click', '#customer-tab', function () {
         $('#addCustomerStatus').bootstrapToggle('on');
     }
     $('#addCustomerBtn').on('click', function () {
+        $('#popupCustomerTitle').html('Thêm khách hàng');
+        $('#editCustomerButton').attr('id', 'addCustomerButton');
+        $('#editCustomerForm').attr('id', 'addCustomerForm');
         clearCustomerErrorsMessage();
         resetForm();
     });
@@ -113,6 +233,7 @@ $(document).on('click', '#customer-tab', function () {
         dataSearch = { load: 'index' };
         getCustomerData();
     });
+
     /**
      * Create events for data searching
      * 
@@ -120,6 +241,7 @@ $(document).on('click', '#customer-tab', function () {
      * 
      * @returns {Json}
      */
+
     $('#searchCustomer').unbind().on('click', function (e) {
         var name = $("#customerSearchName").val();
         var email = $("#customerSearchEmail").val();
@@ -264,55 +386,7 @@ $(document).on('click', '#customer-tab', function () {
         else
             customerStatus = '0';
     });
-    /**
-   * Save data to database
-   * 
-   * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
-   * 
-   * @returns {Response}
-   */
 
-    $(document).on('click', '#addCustomerButton', function (e) {
-        e.preventDefault();
-        var form = $('#addCustomerForm')[0];
-        var formData = new FormData(form);
-        formData.append('is_active', customerStatus);
-        $.ajax({
-            url: base_url + '/admin/customers/',
-            type: "POST",
-            data: formData,
-            contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
-            processData: false, // NEEDED, DON'T OMIT THIS
-            dataType: 'json',
-            success: function (data) {
-                $('#addCustomerForm').trigger("reset");
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                })
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Thêm khách hàng mới thành công'
-                })
-            },
-            beforeSend: function () {
-                clearCustomerErrorsMessage();
-            },
-            error: function (err) {
-                $.each(err.responseJSON.errors, function (key, value) {
-                    $("#" + key + '-errors').html(value[0]);
-                    $("#" + key + '-errors').next().removeClass('d-none');
-                });
-            }
-        });
-    });
     /**
      * Append customers info to input field
      * 
@@ -334,6 +408,7 @@ $(document).on('click', '#customer-tab', function () {
             success: function (data) {
                 idCustomer = data.data.customer_id;
                 $('#addCustomerButton').attr('id', 'editCustomerButton');
+                $('#addCustomerForm').attr('id', 'editCustomerForm');
                 $("#addCustomerName").val(data.data.customer_name);
                 $("#addCustomerEmail").val(data.data.email);
                 $("#addCustomerAddress").val(data.data.address);
@@ -345,56 +420,7 @@ $(document).on('click', '#customer-tab', function () {
             },
         });
     })
-    /**
-     * Update customer data to database
-     * 
-     * @author Phan.Phuc <phan.phuc.rcvn2012@gmail.com>
-     * 
-     * @returns {Response}
-     */
-    $('body').unbind().on('click', '#editCustomerButton', function (e) {
-        e.preventDefault();
-        clearCustomerErrorsMessage();
-        var form = $('#addCustomerForm')[0];
-        var formData = new FormData(form);
-        formData.append('is_active', customerStatus);
-        formData.append('customer_id', idCustomer);
-        $.ajax({
-            url: base_url + '/admin/customers/update/' + idCustomer,
-            type: "post",
-            contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
-            processData: false, // NEEDED, DON'T OMIT THIS
-            data: formData,
-            dataType: 'json',
-            success: function (data) {
-                $("#closePopupCustomerButton").trigger("click");
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                })
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Chỉnh sửa khách hàng thành công'
-                })
-            },
-            beforeSend: function () {
-                clearCustomerErrorsMessage();
-            },
-            error: function (err) {
-                $.each(err.responseJSON.errors, function (key, value) {
-                    $("#" + key + '-errors').html(value[0]);
-                    $("#" + key + '-errors').next().removeClass('d-none');
-                });
-            }
-        });
-    });
+
     $('#importCSV').on('change', function () {
         var form = $('#uploadFileCSV')[0];
         var formData = new FormData(form);
